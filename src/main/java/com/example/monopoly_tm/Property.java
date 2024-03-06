@@ -2,13 +2,22 @@ package com.example.monopoly_tm;
 
 public class Property extends Cell
 {
-    boolean isOwned;
+    boolean isOwned = false;
+    String propertyColor;
 
-    public Property(String color, String name, int rent, int houseCost)
+    int houseCost;
+
+    int[] rent;
+
+    public Property(String type, String name, String color, int[] rent, int tileCost, int houseCost)
     {
-        super(color, name);
-        isOwned = false;
+        super(type, name, tileCost);
+        propertyColor = color;
+        this.houseCost = houseCost;
+        this.rent = rent;
     }
+
+
 
 
 

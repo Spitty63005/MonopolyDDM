@@ -1,12 +1,11 @@
 package com.example.monopoly_tm;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
@@ -28,7 +27,8 @@ public class GameController implements Initializable
     TextField player1, player2, player3, player4, player5, player6, player7, player8;
 
     @FXML
-    AnchorPane playerCount_AP, spinner_AP;
+    AnchorPane playerCount_AP, spinner_AP, base_AP;
+
 
     TextField[] nameInputs = new TextField[8];
 
@@ -73,15 +73,23 @@ public class GameController implements Initializable
     * where it will be used
     * also hides all the pages on the setup scene
     */
-    public void showGame() throws IOException
+    public void showGame(ActionEvent e) throws IOException
     {
-        for(int i = 0; i < amountOfPlayers; i++)
+        for (int i = 0; i < amountOfPlayers; i++)
         {
+            if (nameInputs[i].getText().isEmpty() || nameInputs[i].getText().equals(" "))
+            {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "All Players Must Have A Valid Name");
+                alert.show();
+                return;
+            }
             currentPlayers.add(new Players(nameInputs[i].getText()));
         }
 
-        hideAllPages();
+//        hides the previous window so the user cannot access it after they start the game
+        ((Node)(e.getSource())).getScene().getWindow().hide();
 
+//        sets the players in the game and switches to the game-board scene
         GamePlayController.setPlayerList(currentPlayers);
         GamePlayController.showGameBoard();
     }
