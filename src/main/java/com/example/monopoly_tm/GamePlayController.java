@@ -1,5 +1,7 @@
 package com.example.monopoly_tm;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,15 +13,19 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.*;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -42,8 +48,14 @@ public class GamePlayController implements Initializable
         current_player_properties_LBL, player_land_space_LBL;
 
     @FXML
-    ImageView die_one_IV, die_two_IV;
+    ImageView right_die_one, right_die_two, right_die_three, right_die_four, right_die_five, right_die_six,
+            left_die_one, left_die_two, left_die_three, left_die_four, left_die_five, left_die_six;
 
+    @FXML
+    StackPane left_stack, right_stack;
+
+    ImageView[] rightDie = new ImageView[6];
+    ImageView[] leftDie = new ImageView[6];
 
     static ArrayList<Players> playerList = new ArrayList<Players>();
 
@@ -56,11 +68,8 @@ public class GamePlayController implements Initializable
         Cell_35_pane, Cell_36_pane, Cell_37_pane, Cell_38_pane, Cell_39_pane};
     ArrayList<Cell> cellList = new ArrayList<>();
 
-
-
-    public final Image[] ALL_ROLLS = new Image[6];
-
     static Players currentPlayer;
+    private final Image[] ALL_ROLLS = new Image[6];
 
 
     @Override
@@ -111,7 +120,7 @@ public class GamePlayController implements Initializable
 
                 }
             }
-            setDieImageList();
+            setDieLists();
         }
         catch(Exception ex){
             System.out.println(ex.toString());
@@ -119,17 +128,7 @@ public class GamePlayController implements Initializable
 
         changePlayer(currentPlayer);
     }
-
-    private void setDieImageList() throws FileNotFoundException
-    {
-        ALL_ROLLS[0] = new Image(new FileInputStream("images/Die/Rolled_One.png"));
-        ALL_ROLLS[1] = new Image(new FileInputStream("images/Die/Rolled_Two.png"));
-        ALL_ROLLS[2] = new Image(new FileInputStream("images/Die/Rolled_Three.png"));
-        ALL_ROLLS[3] = new Image(new FileInputStream("images/Die/Rolled_Four.png"));
-        ALL_ROLLS[4] = new Image(new FileInputStream("images/Die/Rolled_Five.png"));
-        ALL_ROLLS[5] = new Image(new FileInputStream("images/Die/Rolled_Six.png"));
-    }
-
+//region turn start and end
     private void changePlayer(Players currentPlayer)
     {
         int currentPlayerIndex = playerList.indexOf(currentPlayer);
@@ -154,21 +153,22 @@ public class GamePlayController implements Initializable
         player_land_space_LBL.setText("Roll the dice to move");
     }
 
-    //
-    private int[] getRentValues(Object rent)
+    public void endTurn(ActionEvent e)
     {
-        int[] rentArr = new int[6];
-        String[] splitString = ((String) rent).split(",");
+//        TODO LATER make this only work if the player has moved this turn
+        int indexOfCurrentPlayer = playerList.indexOf(currentPlayer);
 
-//        takes all the parts of the inputted string and introduces them to the array
-        for(int i = 0; i < 6; i++)
-        {
-            long part1 = (Long.parseLong(splitString[i]));
-            rentArr[i] = Math.toIntExact(part1);
-        }
 
-        return rentArr;
+        currentPlayer = (indexOfCurrentPlayer >= playerList.size()-1)
+                ? playerList.get(0)
+                : playerList.get(indexOfCurrentPlayer+1);
+
+        changePlayer(currentPlayer);
     }
+    //endregion
+
+
+//region startOfGame
 
     public static void showGameBoard() throws IOException
     {
@@ -200,7 +200,25 @@ public class GamePlayController implements Initializable
         currentPlayer = playerList.get(0);
     }
 
-    public void rollTheDice(ActionEvent e)
+    private int[] getRentValues(Object rent)
+    {
+        int[] rentArr = new int[6];
+        String[] splitString = ((String) rent).split(",");
+
+//        takes all the parts of the inputted string and introduces them to the array
+        for(int i = 0; i < 6; i++)
+        {
+            long part1 = (Long.parseLong(splitString[i]));
+            rentArr[i] = Math.toIntExact(part1);
+        }
+
+        return rentArr;
+    }
+
+    //endregion
+
+//region dice
+    public void rollTheDice(ActionEvent e) throws InterruptedException
     {
       /* little roll dice "animation" (go through random dice sprites changing over interval of time)
       *  but after 1.5 seconds show result (determined by behind scenes random method)
@@ -209,52 +227,57 @@ public class GamePlayController implements Initializable
       *  player moves forward the sum of the two dice
       *  update the landing space label*/
         int diceSum = 0;
-        try
-        {
-            diceSum = rollAnimation();
-        } catch (InterruptedException ex)
-        {
-            throw new RuntimeException(ex);
-        }
-
+        diceSum = rollDice();
+        System.out.println(currentPlayer.getName() + " Moves Forward " + diceSum + " Spaces");
     }
 
-    private int rollAnimation() throws InterruptedException
+    private int rollDice() throws InterruptedException
     {
         int dieOne = randDieNum();
         int dieTwo = randDieNum();
 
-        int rollTime = 0;
 
-        while(rollTime < 3000)
-        {
-            die_one_IV.setImage(ALL_ROLLS[randDieNum()]);
-            die_two_IV.setImage(ALL_ROLLS[randDieNum()]);
-            Thread.sleep(100);
-            rollTime += 100;
-        }
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> rollingFrame()));
 
 
-        return dieOne + dieTwo;
+        timeline.setCycleCount(20);
+        timeline.play();
+
+
+        System.out.println("Die one rolled " + (dieOne+1));
+        System.out.println("Die two rolled " + (dieTwo+1));
+
+        return (dieOne+1) + (dieTwo+1);
+    }
+
+    private void rollingFrame()
+    {
+        left_stack.getChildren().clear();
+        right_stack.getChildren().clear();
+        left_stack.getChildren().add((ALL_ROLLS[randDieNum()]));
+
+        /* TODO http://www.java2s.com/ref/java/javafx-timeline-create-slide-show-animation.html*/
     }
 
     private static int randDieNum()
     {
-        return (int) Math.floor(Math.random() * (6 - 1) * 1);
+        return (int) (Math.random() * (6 - 1) * 1);
     }
 
-    public void endTurn(ActionEvent e)
+    private void setDieLists() throws FileNotFoundException
     {
-//        TODO LATER make this only work if the player has moved this turn
-        int indexOfCurrentPlayer = playerList.indexOf(currentPlayer);
+        rightDie = new ImageView[]{right_die_one, right_die_two, right_die_three, right_die_four,
+                right_die_five, right_die_six};
 
-
-        currentPlayer = (indexOfCurrentPlayer >= playerList.size()-1)
-                ? playerList.get(0)
-                : playerList.get(indexOfCurrentPlayer+1);
-
-        changePlayer(currentPlayer);
+        leftDie = new ImageView[] {left_die_one, left_die_two, left_die_three, left_die_four,
+                left_die_five, left_die_six};
     }
+
+//    endregion
+
+
+
+
 
 
 
