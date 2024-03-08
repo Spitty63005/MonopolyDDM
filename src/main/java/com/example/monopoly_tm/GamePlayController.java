@@ -8,8 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -24,8 +24,6 @@ import org.json.simple.parser.*;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -54,22 +52,22 @@ public class GamePlayController implements Initializable
     @FXML
     StackPane left_stack, right_stack;
 
+
+
     ImageView[] rightDie = new ImageView[6];
     ImageView[] leftDie = new ImageView[6];
+
+    boolean hasMoved = false;
+
+    boolean doubles = false;
 
     static ArrayList<Players> playerList = new ArrayList<Players>();
 
 //    these two arrays are parallel
-    Pane[] paneList = {go_Pane, Cell_1_pane, Cell_2_pane, Cell_3_pane, Cell_4_pane, Cell_5_pane, Cell_6_pane, Cell_7_pane,
-        Cell_8_pane, Cell_9_pane, jail_visit, Cell_11_pane, Cell_12_pane, Cell_13_pane, Cell_14_pane,
-        Cell_15_pane, Cell_16_pane, Cell_17_pane, Cell_18_pane, Cell_19_pane, free_parking,
-        Cell_21_pane, Cell_22_pane, Cell_23_pane, Cell_24_pane, Cell_25_pane, Cell_26_pane, Cell_27_pane,
-        Cell_28_pane, Cell_29_pane, go_to_jail, Cell_31_pane, Cell_32_pane, Cell_33_pane, Cell_34_pane,
-        Cell_35_pane, Cell_36_pane, Cell_37_pane, Cell_38_pane, Cell_39_pane};
+    Pane[] paneList;
     ArrayList<Cell> cellList = new ArrayList<>();
 
     static Players currentPlayer;
-    private final Image[] ALL_ROLLS = new Image[6];
 
 
     @Override
@@ -127,7 +125,21 @@ public class GamePlayController implements Initializable
         }
 
         changePlayer(currentPlayer);
+
+        paneList = new Pane[]{go_Pane, Cell_1_pane, Cell_2_pane, Cell_3_pane, Cell_4_pane, Cell_5_pane, Cell_6_pane, Cell_7_pane,
+                Cell_8_pane, Cell_9_pane, jail_visit, Cell_11_pane, Cell_12_pane, Cell_13_pane, Cell_14_pane,
+                Cell_15_pane, Cell_16_pane, Cell_17_pane, Cell_18_pane, Cell_19_pane, free_parking,
+                Cell_21_pane, Cell_22_pane, Cell_23_pane, Cell_24_pane, Cell_25_pane, Cell_26_pane, Cell_27_pane,
+                Cell_28_pane, Cell_29_pane, go_to_jail, Cell_31_pane, Cell_32_pane, Cell_33_pane, Cell_34_pane,
+                Cell_35_pane, Cell_36_pane, Cell_37_pane, Cell_38_pane, Cell_39_pane};
+
+        for (Players p:
+             playerList)
+        {
+            paneList[0].getChildren().add(p.getPlayerPiece());
+        }
     }
+
 //region turn start and end
     private void changePlayer(Players currentPlayer)
     {
@@ -151,19 +163,28 @@ public class GamePlayController implements Initializable
         current_player_properties_LBL.setText(String.valueOf(currentPlayerOwns));
 
         player_land_space_LBL.setText("Roll the dice to move");
+
+        hasMoved = false;
     }
 
     public void endTurn(ActionEvent e)
     {
-//        TODO LATER make this only work if the player has moved this turn
-        int indexOfCurrentPlayer = playerList.indexOf(currentPlayer);
+        if(hasMoved && !doubles)
+        {
+            int indexOfCurrentPlayer = playerList.indexOf(currentPlayer);
 
 
-        currentPlayer = (indexOfCurrentPlayer >= playerList.size()-1)
-                ? playerList.get(0)
-                : playerList.get(indexOfCurrentPlayer+1);
+            currentPlayer = (indexOfCurrentPlayer >= playerList.size() - 1)
+                    ? playerList.get(0)
+                    : playerList.get(indexOfCurrentPlayer + 1);
 
-        changePlayer(currentPlayer);
+            changePlayer(currentPlayer);
+        }
+        else
+        {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Must Move To End Turn");
+            alert.show();
+        }
     }
     //endregion
 
@@ -218,45 +239,104 @@ public class GamePlayController implements Initializable
     //endregion
 
 //region dice
-    public void rollTheDice(ActionEvent e) throws InterruptedException
+
+    public void rollDice(ActionEvent ae)
     {
-      /* little roll dice "animation" (go through random dice sprites changing over interval of time)
-      *  but after 1.5 seconds show result (determined by behind scenes random method)
-      *  check for if doubles are rolled
-      *  keep rolled dice false if true else change it
-      *  player moves forward the sum of the two dice
-      *  update the landing space label*/
-        int diceSum = 0;
-        diceSum = rollDice();
-        System.out.println(currentPlayer.getName() + " Moves Forward " + diceSum + " Spaces");
+        if(!hasMoved || doubles)
+        {
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.07), e -> rollingFrame()));
+
+            timeline.setCycleCount(10);
+            timeline.play();
+
+
+            timeline.setOnFinished((e) ->
+            {
+                updateDieImages();
+            });
+        }
+        else
+        {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Can only roll once a turn unless rolled doubles");
+        }
     }
 
-    private int rollDice() throws InterruptedException
+    private void updateDieImages()
     {
-        int dieOne = randDieNum();
-        int dieTwo = randDieNum();
+        int currLeftDieValue = imageToInt(left_stack);
+        int currRightDieValue = imageToInt(right_stack);
+        System.out.println("Die one rolled: " + currLeftDieValue +"\nDie two rolled: " + currRightDieValue);
 
+        int diceSum = currLeftDieValue + currRightDieValue;
+        System.out.println(currentPlayer.getName() + " Moves Forward " + diceSum + " Spaces");
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> rollingFrame()));
+        hasMoved = true;
 
+        doubles = currRightDieValue == currLeftDieValue;
 
-        timeline.setCycleCount(20);
-        timeline.play();
+        movePiece(diceSum);
 
+    }
 
-        System.out.println("Die one rolled " + (dieOne+1));
-        System.out.println("Die two rolled " + (dieTwo+1));
+    private int imageToInt(StackPane stack)
+    {
+        String result = stack.getChildren().get(0).toString();
+        String[] imageViewSplit = result.split("_");
+        String test = imageViewSplit[2].substring(0, imageViewSplit[2].indexOf(","));
 
-        return (dieOne+1) + (dieTwo+1);
+        switch (imageViewSplit[2].substring(0, imageViewSplit[2].indexOf(",")))
+        {
+            case "one" ->
+            {
+                return 1;
+            }
+
+            case "two" ->
+            {
+                return 2;
+            }
+
+            case "three" ->
+            {
+                return 3;
+            }
+
+            case "four" ->
+            {
+                return 4;
+            }
+
+            case "five" ->
+            {
+                return 5;
+            }
+
+            case "six" ->
+            {
+                return 6;
+            }
+
+            default ->
+            {
+                return 7;
+            }
+        }
     }
 
     private void rollingFrame()
     {
+        left_stack.getChildren().get(0).setVisible(false);
+        right_stack.getChildren().get(0).setVisible(false);
+
         left_stack.getChildren().clear();
         right_stack.getChildren().clear();
-        left_stack.getChildren().add((ALL_ROLLS[randDieNum()]));
 
-        /* TODO http://www.java2s.com/ref/java/javafx-timeline-create-slide-show-animation.html*/
+        left_stack.getChildren().add(leftDie[randDieNum()]);
+        right_stack.getChildren().add(rightDie[randDieNum()]);
+
+        left_stack.getChildren().get(0).setVisible(true);
+        right_stack.getChildren().get(0).setVisible(true);
+
     }
 
     private static int randDieNum()
@@ -264,7 +344,7 @@ public class GamePlayController implements Initializable
         return (int) (Math.random() * (6 - 1) * 1);
     }
 
-    private void setDieLists() throws FileNotFoundException
+    private void setDieLists()
     {
         rightDie = new ImageView[]{right_die_one, right_die_two, right_die_three, right_die_four,
                 right_die_five, right_die_six};
@@ -276,7 +356,38 @@ public class GamePlayController implements Initializable
 //    endregion
 
 
+//region actions after roll
+    private void movePiece(int amountToMove)
+    {
+        paneList[getPlayerPosFromPaneList()].getChildren()
+                .remove(currentPlayer.getPlayerPiece());
 
+        currentPlayer.movePlayer(amountToMove);
+
+        movingAnimation(paneList[getPlayerPosFromPaneList()]);
+
+        paneList[currentPlayer.getPosition()].getChildren().add(currentPlayer.getPlayerPiece());
+    }
+
+    private int getPlayerPosFromPaneList()
+    {
+        return currentPlayer.getPosition();
+    }
+
+    private void movingAnimation(Pane endLoc)
+    {
+        double endX = endLoc.getLayoutX();
+        double endY = endLoc.getLayoutY();
+
+        double currX = currentPlayer.getPlayerPiece().getLayoutX();
+        double currY = currentPlayer.getPlayerPiece().getLayoutY();
+
+        while(!(enx))
+        {
+
+        }
+    }
+//endregion
 
 
 

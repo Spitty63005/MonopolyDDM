@@ -3,17 +3,17 @@ package com.example.monopoly_tm;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Screen;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -33,6 +33,9 @@ public class GameController implements Initializable
     TextField[] nameInputs = new TextField[8];
 
     int amountOfPlayers;
+
+    Color[] playerColors = {Color.BLUE, Color.RED, Color.GREEN, Color.PURPLE,
+            Color.YELLOW, Color.PINK, Color.ORANGE, Color.BEIGE};
 
     ArrayList<Players> currentPlayers = new ArrayList<>();
 
@@ -75,6 +78,7 @@ public class GameController implements Initializable
     */
     public void showGame(ActionEvent e) throws IOException
     {
+        Rectangle rect;
         for (int i = 0; i < amountOfPlayers; i++)
         {
             if (nameInputs[i].getText().isEmpty() || nameInputs[i].getText().equals(" "))
@@ -83,7 +87,8 @@ public class GameController implements Initializable
                 alert.show();
                 return;
             }
-            currentPlayers.add(new Players(nameInputs[i].getText()));
+            rect = new Rectangle(50, 50, playerColors[i]);
+            currentPlayers.add(new Players(nameInputs[i].getText(), rect));
         }
 
 //        hides the previous window so the user cannot access it after they start the game

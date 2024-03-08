@@ -1,5 +1,9 @@
 package com.example.monopoly_tm;
 
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
+
 import java.util.ArrayList;
 
 public class Players
@@ -10,9 +14,14 @@ public class Players
 
     boolean hasDiceRolled = false;
 
-    public Players(String name)
+    Rectangle playerPiece;
+
+    int position = 0;
+
+    public Players(String name, Rectangle playerPiece)
     {
         this.name = name;
+        this.playerPiece = playerPiece;
         balance = 1500;
     }
 
@@ -53,5 +62,26 @@ public class Players
         this.hasDiceRolled = hasDiceRolled;
     }
 
+    public int movePlayer(int distance)
+    {
+        position += distance;
+        if(position >= 40)
+            position -= 40;
+        return position;
+    }
 
+    public int getPosition()
+    {
+        return position;
+    }
+
+    public Rectangle getPlayerPiece()
+    {
+        return playerPiece;
+    }
+
+    public Paint getColor()
+    {
+        return playerPiece.getFill();
+    }
 }

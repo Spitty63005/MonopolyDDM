@@ -40,7 +40,7 @@
                         <Button layoutX="23.0" layoutY="25.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="77.0" text="Buy" />
                         <Button layoutX="14.0" layoutY="688.0" mnemonicParsing="false" onAction="#endTurn" prefHeight="48.0" prefWidth="77.0" text="End Turn" />
                         <Button layoutX="177.0" layoutY="25.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="77.0" text="Sell" />
-                        <Button layoutX="188.0" layoutY="688.0" mnemonicParsing="false" onAction="#rollTheDice" prefHeight="48.0" prefWidth="77.0" text="Roll Dice" />
+                        <Button layoutX="188.0" layoutY="688.0" mnemonicParsing="false" onAction="#rollDice" prefHeight="48.0" prefWidth="77.0" text="Roll Dice" />
                         <Label fx:id="player_land_space_LBL" layoutX="29.0" layoutY="82.0" prefHeight="345.0" prefWidth="223.0" text="You Currently are on {SPACE_NAME} ({IT IS OWNED BY/ NOT OWNED}) {YOU OWE $ MONEY}" wrapText="true">
                            <font>
                               <Font size="30.0" />
