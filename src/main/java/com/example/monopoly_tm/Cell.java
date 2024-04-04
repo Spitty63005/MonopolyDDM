@@ -5,6 +5,7 @@ public class Cell
     String type, name;
     int cost;
     boolean isOwned = false;
+    Players owner;
 
     public Cell(String type, String name)
     {
@@ -34,9 +35,10 @@ public class Cell
         return type;
     }
 
-    public void setOwned(boolean owned)
+    public void setOwned(boolean owned, Players _owner)
     {
         isOwned = owned;
+        owner = _owner;
     }
 
 

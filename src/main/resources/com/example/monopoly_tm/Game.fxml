@@ -130,7 +130,7 @@
                         </Label>
                         <Button layoutX="33.0" layoutY="94.0" mnemonicParsing="false" text="Other Player Info" />
                         <Button layoutX="33.0" layoutY="156.0" mnemonicParsing="false" text="Game LeaderBoard" />
-                        <Button layoutX="215.0" layoutY="94.0" mnemonicParsing="false" text="Settings" />
+                        <Button layoutX="215.0" layoutY="94.0" mnemonicParsing="false" onAction="#toggleSettings" text="Settings" />
                      </children>
                   </Pane>
                   <Pane layoutX="33.0" layoutY="776.0" prefHeight="300.0" prefWidth="467.0">
@@ -212,5 +212,27 @@
             </AnchorPane>
          </center>
       </BorderPane>
+      <Pane layoutX="775.0" layoutY="350.0" prefHeight="388.0" prefWidth="560.0" style="-fx-background-color: blue;" visible="false">
+         <children>
+            <Label fx:id="turn_change_lbl" layoutX="130.0" layoutY="58.0" prefHeight="45.0" prefWidth="280.0" text="{PlayerName}'s Turn!" textAlignment="CENTER">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
+            <Button layoutX="202.0" layoutY="288.0" mnemonicParsing="false" prefHeight="74.0" prefWidth="133.0" text="Okay!" />
+         </children>
+      </Pane>
+      <Pane fx:id="settings_pane" layoutX="785.0" layoutY="360.0" prefHeight="388.0" prefWidth="560.0" style="-fx-background-color: blue;">
+         <children>
+            <Label fx:id="turn_change_lbl1" layoutX="215.0" layoutY="48.0" prefHeight="45.0" prefWidth="107.0" text="Settings" textAlignment="CENTER">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
+            <Button layoutX="202.0" layoutY="288.0" mnemonicParsing="false" onAction="#toggleSettings" prefHeight="74.0" prefWidth="133.0" text="Back" />
+            <Button layoutX="96.0" layoutY="157.0" mnemonicParsing="false" onAction="#save" prefHeight="74.0" prefWidth="133.0" text="Save" />
+            <Button layoutX="299.0" layoutY="157.0" mnemonicParsing="false" onAction="#save" prefHeight="74.0" prefWidth="133.0" text="Save &amp; Quit" />
+         </children>
+      </Pane>
    </children>
 </AnchorPane>

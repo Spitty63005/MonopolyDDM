@@ -7,9 +7,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -24,6 +26,7 @@ import org.json.simple.parser.*;
 
 import java.io.*;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -39,7 +42,7 @@ public class GamePlayController implements Initializable
             Cell_15_pane, Cell_16_pane, Cell_17_pane, Cell_18_pane, Cell_19_pane, free_parking,
             Cell_21_pane, Cell_22_pane, Cell_23_pane, Cell_24_pane, Cell_25_pane, Cell_26_pane, Cell_27_pane,
             Cell_28_pane, Cell_29_pane, go_to_jail, Cell_31_pane, Cell_32_pane, Cell_33_pane, Cell_34_pane,
-            Cell_35_pane, Cell_36_pane, Cell_37_pane, Cell_38_pane, Cell_39_pane;
+            Cell_35_pane, Cell_36_pane, Cell_37_pane, Cell_38_pane, Cell_39_pane, settings_pane;
 
     @FXML
     Label current_player_info_LBL, current_player_name_LBL,
@@ -52,7 +55,7 @@ public class GamePlayController implements Initializable
     @FXML
     StackPane left_stack, right_stack;
 
-
+    TextInputDialog td = new TextInputDialog();
 
     ImageView[] rightDie = new ImageView[6];
     ImageView[] leftDie = new ImageView[6];
@@ -144,6 +147,7 @@ public class GamePlayController implements Initializable
     private void changePlayer(Players currentPlayer)
     {
         int currentPlayerIndex = playerList.indexOf(currentPlayer);
+
 
 
         String name = playerList.get(currentPlayerIndex).getName();
@@ -359,12 +363,18 @@ public class GamePlayController implements Initializable
 //region actions after roll
     private void movePiece(int amountToMove)
     {
-        paneList[getPlayerPosFromPaneList()].getChildren()
-                .remove(currentPlayer.getPlayerPiece());
+        Pane startPane = paneList[getPlayerPosFromPaneList()];
+        startPane.getChildren().remove(currentPlayer.getPlayerPiece());
+
+        int startPaneInt = getPlayerPosFromPaneList();
 
         currentPlayer.movePlayer(amountToMove);
 
-        movingAnimation(paneList[getPlayerPosFromPaneList()]);
+        int endPaneInt = getPlayerPosFromPaneList();
+
+        Pane endPane = paneList[getPlayerPosFromPaneList()];
+
+        movingAnimation(startPaneInt, endPaneInt);
 
         paneList[currentPlayer.getPosition()].getChildren().add(currentPlayer.getPlayerPiece());
     }
@@ -374,22 +384,63 @@ public class GamePlayController implements Initializable
         return currentPlayer.getPosition();
     }
 
-    private void movingAnimation(Pane endLoc)
+    private void movingAnimation(int endLoc, int currLoc)
     {
-        double endX = endLoc.getLayoutX();
-        double endY = endLoc.getLayoutY();
-
-        double currX = currentPlayer.getPlayerPiece().getLayoutX();
-        double currY = currentPlayer.getPlayerPiece().getLayoutY();
-
-        while(!(enx))
-        {
-
-        }
+        
     }
 //endregion
 
 
+    // region Other Info
+    public void toggleSettings(ActionEvent e)
+    {
+        boolean isSettingsOpen = settings_pane.isVisible();
+        settings_pane.setVisible(!isSettingsOpen);
+    }
+    // endregion
+
+    //region save game and close game
+    public void save(ActionEvent e) throws SQLException
+    {
+        String pressedButton = e.getSource().toString();
+
+        td.showAndWait();
+
+        String pass = td.getEditor().getText();
+
+        DButils.completeSave(playerList, cellList, pass, td);
+
+        if(pressedButton.contains("&"))
+        {
+            try
+            {
+                quit(e);
+            } catch (IOException ex)
+            {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    // Returns user to main menu
+    public void quit(ActionEvent e) throws IOException
+    {
+        ((Node)(e.getSource())).getScene().getWindow().hide();
+
+        Stage stage = new Stage(StageStyle.DECORATED);
+        stage.setTitle("Main Menu");
+
+        Screen screen = Screen.getPrimary();
+        Rectangle2D screenBounds = screen.getVisualBounds();
+
+        FXMLLoader loader = new FXMLLoader(GameApplication.class.getResource("SetUp.fxml"));
+        Scene scene = new Scene(loader.load(), 600, 400);
+        stage.setY(screenBounds.getMaxY()/3);
+        stage.setX(screenBounds.getMaxX()/3);
+        stage.setScene(scene);
+        stage.show();
+    }
+    //endregion
 
 
 
