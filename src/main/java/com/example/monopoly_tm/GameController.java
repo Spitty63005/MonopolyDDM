@@ -27,7 +27,7 @@ public class GameController implements Initializable
     TextField player1, player2, player3, player4, player5, player6, player7, player8;
 
     @FXML
-    AnchorPane playerCount_AP, spinner_AP, base_AP;
+    AnchorPane playerCount_AP, spinner_AP, base_AP, main_menu_AP;
 
 
     TextField[] nameInputs = new TextField[8];
@@ -65,6 +65,7 @@ public class GameController implements Initializable
     {
         playerCount_AP.setVisible(false);
         spinner_AP.setVisible(false);
+        main_menu_AP.setVisible(false);
         for(TextField tf : nameInputs)
         {
             tf.setVisible(false);
@@ -116,6 +117,31 @@ public class GameController implements Initializable
     {
         hideAllPages();
         spinner_AP.setVisible(true);
+    }
+
+    public void showMainMenu()
+    {
+        hideAllPages();
+        main_menu_AP.setVisible(true);
+    }
+
+    public void showLoadGame()
+    {
+
+    }
+
+    public void showSettings()
+    {
+        Alert alert = new Alert(Alert.AlertType.ERROR,
+                "This game is perfect as is, so there is no option to change part of this masterpiece");
+        alert.show();
+    }
+
+    public void quit()
+    {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Afraid to lose?");
+        alert.showAndWait();
+        System.exit(0);
     }
 
 

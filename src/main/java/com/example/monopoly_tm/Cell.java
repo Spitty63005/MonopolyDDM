@@ -40,6 +40,18 @@ public class Cell
         isOwned = owned;
         owner = _owner;
     }
+    public boolean isOwned()
+    {
+        return isOwned;
+    }
+
+    public String getOwnerName(){
+        return owner.getName();
+    }
 
 
+    public Players getOwner()
+    {
+        return owner;
+    }
 }

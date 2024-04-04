@@ -37,7 +37,7 @@
                   </Label>
                   <Pane layoutX="20.0" layoutY="32.0" prefHeight="744.0" prefWidth="280.0">
                      <children>
-                        <Button layoutX="23.0" layoutY="25.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="77.0" text="Buy" />
+                        <Button layoutX="23.0" layoutY="25.0" mnemonicParsing="false" onAction="#purchase" prefHeight="48.0" prefWidth="77.0" text="Buy" />
                         <Button layoutX="14.0" layoutY="688.0" mnemonicParsing="false" onAction="#endTurn" prefHeight="48.0" prefWidth="77.0" text="End Turn" />
                         <Button layoutX="177.0" layoutY="25.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="77.0" text="Sell" />
                         <Button layoutX="188.0" layoutY="688.0" mnemonicParsing="false" onAction="#rollDice" prefHeight="48.0" prefWidth="77.0" text="Roll Dice" />
@@ -140,11 +140,35 @@
                               <Font size="30.0" />
                            </font>
                         </Label>
-                        <Label fx:id="game_log_LBL" alignment="TOP_LEFT" layoutX="27.0" layoutY="63.0" prefHeight="223.0" prefWidth="410.0" text="{ PLAYER PAID PLAYER $ 30} ">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Label>
+                        <Pane fx:id="game_log_pane" layoutX="27.0" layoutY="63.0">
+                           <children>
+                              <Label alignment="TOP_LEFT" prefHeight="52.0" prefWidth="410.0" text=" Game Start">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="TOP_LEFT" layoutY="50.0" prefHeight="52.0" prefWidth="410.0" text=" ">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="TOP_LEFT" layoutY="100.0" prefHeight="52.0" prefWidth="410.0" text=" ">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="TOP_LEFT" layoutY="150.0" prefHeight="52.0" prefWidth="410.0" text=" ">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="TOP_LEFT" layoutY="200.0" prefHeight="45.0" prefWidth="410.0" text=" ">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
                         <Label layoutX="187.0" layoutY="14.0" text="*Newest to Oldes" />
                      </children>
                   </Pane>
@@ -222,7 +246,7 @@
             <Button layoutX="202.0" layoutY="288.0" mnemonicParsing="false" prefHeight="74.0" prefWidth="133.0" text="Okay!" />
          </children>
       </Pane>
-      <Pane fx:id="settings_pane" layoutX="785.0" layoutY="360.0" prefHeight="388.0" prefWidth="560.0" style="-fx-background-color: blue;">
+      <Pane fx:id="settings_pane" layoutX="785.0" layoutY="360.0" prefHeight="388.0" prefWidth="560.0" style="-fx-background-color: blue;" visible="false">
          <children>
             <Label fx:id="turn_change_lbl1" layoutX="215.0" layoutY="48.0" prefHeight="45.0" prefWidth="107.0" text="Settings" textAlignment="CENTER">
                <font>

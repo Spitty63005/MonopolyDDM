@@ -3,7 +3,6 @@ package com.example.monopoly_tm;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextInputDialog;
 
-import java.lang.invoke.SwitchPoint;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -21,30 +20,36 @@ public class DButils
         }
     }
 
-    public static void closeUtils(Connection c, PreparedStatement p) throws SQLException
+    public static void closeUtils(PreparedStatement p) throws SQLException
     {
-        c.close();
         p.close();
     }
-    public void closeUtils(Connection c, PreparedStatement p, ResultSet r) throws SQLException
+
+    public static void closeUtils(ResultSet r, PreparedStatement p) throws SQLException
+    {
+        r.close();
+        p.close();
+    }
+
+    public static void closeUtils(Connection c, PreparedStatement p, ResultSet r) throws SQLException
     {
         c.close();
         p.close();
         r.close();
     }
-    // end region
+    // endregion
 
     // region Save Game
-    public static void completeSave(ArrayList<Players> players,
-                                    ArrayList<Cell> properties, String password, TextInputDialog td) throws SQLException
+    public static void completeSave(
+            ArrayList<Players> players,
+            ArrayList<Cell> properties, String password, TextInputDialog td) throws SQLException
     {
-        /* TODO this will be a general method that calls other methods for different parts of saving the game*/
 
         Connection conn = connectDB();
 
         // checks if password is used
         // if used already
-        switch(verifyPwd(password))
+        switch (verifyPwd(password))
         {
             case 0 ->
             {
@@ -56,14 +61,55 @@ public class DButils
             {
                 saveGame(conn, password);
                 savePlayers(conn, players, password);
-                // TODO make a savedOwnedProperties
-                //saveOwnedProperties(conn, players, properties);
+                saveOwnedProperties(conn, players, properties, password);
+                savePlayeLocations(conn, players, password);
             }
         }
+
+        conn.close();
     }
 
-    private static void saveOwnedProperties(Connection conn, ArrayList<Players> players, ArrayList<Cell> properties)
+    private static void savePlayeLocations(Connection conn, ArrayList<Players> players, String password) throws SQLException
     {
+        PreparedStatement ps;
+        ps = conn.prepareStatement("SET FOREIGN_KEY_CHECK=0;");
+        ps.executeUpdate();
+
+        ps = conn.prepareStatement("INSERT INTO Location VALUES(?, ?, ?)");
+        ps.setInt(1, getGameId(password, conn));
+
+        for (Players p : players)
+        {
+            ps.setInt(2, players.indexOf(p));
+            ps.setInt(3, p.getPosition());
+        }
+
+        closeUtils(ps);
+    }
+
+    private static void saveOwnedProperties(
+            Connection conn, ArrayList<Players> players,
+            ArrayList<Cell> properties, String password) throws SQLException
+    {
+        PreparedStatement ps;
+
+        ps = conn.prepareStatement("SET FOREIGN_KEY_CHECKS=0");
+        ps.executeUpdate();
+
+        ps = conn.prepareStatement("INSERT INTO Owned VALUES(?, ?, ?)");
+
+        ps.setInt(1, getGameId(password, conn));
+
+        for (Cell c : properties)
+        {
+            if (c.isOwned)
+            {
+                ps.setInt(2, players.indexOf(c.getOwner()));
+                ps.setInt(3, properties.indexOf(c));
+                ps.executeUpdate();
+            }
+        }
+        closeUtils(ps);
     }
 
 
@@ -78,7 +124,7 @@ public class DButils
 
         // get gameId
 
-        ps.setInt(1 ,getGameId(password, conn));
+        ps.setInt(1, getGameId(password, conn));
 
         for (int i = 0; i < players.size(); i++)
         {
@@ -90,7 +136,7 @@ public class DButils
             ps.setString(4, players.get(i).getName());
             ps.executeUpdate();
         }
-        ps.close();
+        closeUtils(ps);
 
     }
 
@@ -104,11 +150,13 @@ public class DButils
         printGamesTable();
         rs = ps.executeQuery();
 
-        if(rs.next())
+        if (rs.next())
         {
             System.out.println("autism creature yippie!");
+            closeUtils(rs, ps);
             return rs.getInt("gameId");
         }
+        closeUtils(rs, ps);
         return -1;
     }
 
@@ -117,14 +165,15 @@ public class DButils
         Connection conn = connectDB();
         PreparedStatement ps = conn.prepareStatement("SELECT * FROM Games");
         ResultSet rs = ps.executeQuery();
-        while(rs.next())
+        while (rs.next())
         {
             System.out.println("Game ID = " + rs.getInt(1) + "\nGame Password = " + rs.getString(2));
             System.out.println();
         }
+        closeUtils(conn, ps, rs);
     }
 
-    private static int verifyPwd (String password)
+    private static int verifyPwd(String password) throws SQLException
     {
         System.out.println("In verifyPwd");
         Connection conn = connectDB();
@@ -135,22 +184,25 @@ public class DButils
             ps = conn.prepareStatement("SELECT gameId FROM Games WHERE gamePwd = ?");
             ps.setString(1, password);
             rs = ps.executeQuery();
-            if(rs.isBeforeFirst())
+            if (rs.isBeforeFirst())
             {
                 System.out.println("failure");
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Password is Already in Use");
                 alert.showAndWait();
+                closeUtils(rs, ps);
                 return 0;
             }
-            if(rs.next())
+            if (rs.next())
             {
                 System.out.println("true from verifyPwd");
+                closeUtils(rs, ps);
                 return 1;
             }
         } catch (SQLException e)
         {
             throw new RuntimeException(e);
         }
+        closeUtils(rs, ps);
         return 2;
     }
 
@@ -162,19 +214,12 @@ public class DButils
         ps = conn.prepareStatement("INSERT INTO Games (gamePwd) VALUES (?)");
         ps.setString(1, password);
         ps.executeUpdate();
-        ps.close();
+        closeUtils(ps);
     }
     //endregion
 
 
-
     // region load game
-
-    //endregion
-
-
-
-    // region update during game
 
     //endregion
 }

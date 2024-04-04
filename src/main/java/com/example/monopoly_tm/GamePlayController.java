@@ -42,7 +42,7 @@ public class GamePlayController implements Initializable
             Cell_15_pane, Cell_16_pane, Cell_17_pane, Cell_18_pane, Cell_19_pane, free_parking,
             Cell_21_pane, Cell_22_pane, Cell_23_pane, Cell_24_pane, Cell_25_pane, Cell_26_pane, Cell_27_pane,
             Cell_28_pane, Cell_29_pane, go_to_jail, Cell_31_pane, Cell_32_pane, Cell_33_pane, Cell_34_pane,
-            Cell_35_pane, Cell_36_pane, Cell_37_pane, Cell_38_pane, Cell_39_pane, settings_pane;
+            Cell_35_pane, Cell_36_pane, Cell_37_pane, Cell_38_pane, Cell_39_pane, settings_pane, game_log_pane;
 
     @FXML
     Label current_player_info_LBL, current_player_name_LBL,
@@ -367,22 +367,125 @@ public class GamePlayController implements Initializable
         startPane.getChildren().remove(currentPlayer.getPlayerPiece());
 
         int startPaneInt = getPlayerPosFromPaneList();
-
         currentPlayer.movePlayer(amountToMove);
 
         int endPaneInt = getPlayerPosFromPaneList();
-
         Pane endPane = paneList[getPlayerPosFromPaneList()];
 
         movingAnimation(startPaneInt, endPaneInt);
-
         paneList[currentPlayer.getPosition()].getChildren().add(currentPlayer.getPlayerPiece());
+
+        landingLocationFunctions();
     }
 
-    private int getPlayerPosFromPaneList()
+    private void landingLocationFunctions()
     {
-        return currentPlayer.getPosition();
+        Cell cell = cellList.get(currentPlayer.getPosition());
+
+        switch (cell.getType())
+        {
+            case "property" ->
+            {
+                if (cell.isOwned() && !cell.getOwnerName().equals(currentPlayer.getName()))
+                    payRent();
+            }
+            case "utility" -> payUtility();
+            case "railroad" -> payRailRoad();
+            case "tax" -> payTax();
+            case "community-chest" -> openCommunityChest();
+            case "chance" -> drawChanceCard();
+            case "go-to-jail" -> goToJail();
+        }
     }
+
+    private void goToJail()
+    {
+
+    }
+
+    private void drawChanceCard()
+    {
+
+    }
+
+    private void openCommunityChest()
+    {
+
+    }
+
+    private void payTax()
+    {
+
+    }
+
+    private void payRailRoad()
+    {
+
+    }
+
+    private void payUtility()
+    {
+
+    }
+
+    private void payRent()
+    {
+
+    }
+
+    public void purchase(ActionEvent e)
+    {
+        Cell cellToBuy = cellList.get(currentPlayer.getPosition());
+        if(!hasMoved)
+        {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Players can only purchase after they move.");
+            alert.show();
+            return;
+        }
+        if(cellToBuy.isOwned())
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR,
+                    ("This property is already owned by " + cellToBuy.getOwnerName()));
+            return;
+        }
+
+        if(cellToBuy.getType().equalsIgnoreCase("property") && !cellToBuy.isOwned())
+        {
+            if(cellToBuy.getCost() <= currentPlayer.getBalance())
+            {
+                currentPlayer.setBalance(currentPlayer.getBalance()-cellToBuy.getCost());
+                cellToBuy.setOwned(true, currentPlayer);
+                System.out.println("Sucessful purchase");
+                updateGameLog(currentPlayer.getName(), cellToBuy.getName(), "buyprop");
+            }
+        }
+    }
+
+    private void updateGameLog(String playerName, String propertyName, String type)
+    {
+        Label firstLog = ((Label)game_log_pane.getChildren().get(0));
+        Label secondLog = ((Label)game_log_pane.getChildren().get(1));
+        Label thirdLog = ((Label)game_log_pane.getChildren().get(2));
+        Label fourthLog = ((Label)game_log_pane.getChildren().get(3));
+
+        ((Label)game_log_pane.getChildren().get(4)).setText(fourthLog.getText());
+        ((Label)game_log_pane.getChildren().get(3)).setText(thirdLog.getText());
+        ((Label)game_log_pane.getChildren().get(2)).setText(secondLog.getText());
+        ((Label)game_log_pane.getChildren().get(1)).setText(firstLog.getText());
+
+        switch (type)
+        {
+            case "buyprop" -> firstLog.setText(playerName + " has bought " + propertyName + "!");
+            case "payrent" -> firstLog.setText(playerName + "paid rent on " + propertyName + "!");
+            case "chance" -> firstLog.setText(playerName + " drew a chance card!");
+            case "jail" -> firstLog.setText(playerName + " got arrested!");
+            case "chest" -> firstLog.setText(playerName + " got the community chest!");
+            case "tax" -> firstLog.setText(playerName + " paid a tax!");
+        }
+
+    }
+
+    private int getPlayerPosFromPaneList() { return currentPlayer.getPosition(); }
 
     private void movingAnimation(int endLoc, int currLoc)
     {
