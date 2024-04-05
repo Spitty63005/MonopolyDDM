@@ -287,7 +287,6 @@ public class GamePlayController implements Initializable
     {
         String result = stack.getChildren().get(0).toString();
         String[] imageViewSplit = result.split("_");
-        String test = imageViewSplit[2].substring(0, imageViewSplit[2].indexOf(","));
 
         switch (imageViewSplit[2].substring(0, imageViewSplit[2].indexOf(",")))
         {
