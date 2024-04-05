@@ -9,20 +9,20 @@
 
 <AnchorPane fx:id="base_AP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.monopoly_tm.GameController">
    <children>
-      <AnchorPane fx:id="main_menu_AP" prefHeight="400.0" prefWidth="600.0">
+      <AnchorPane fx:id="main_menu_AP" prefHeight="400.0" prefWidth="600.0" styleClass="allBackgrounds" stylesheets="@Style.css">
          <children>
-            <Label layoutX="163.0" layoutY="14.0" prefHeight="69.0" prefWidth="274.0" text="Monopoly">
+            <Label id="main-title" alignment="CENTER_RIGHT" layoutX="135.0" layoutY="38.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="305.0" stylesheets="@Style.css" text="MONOPOLY " textFill="WHITE">
                <font>
-                  <Font name="Curlz MT" size="70.0" />
+                  <Font name="Ebrima" size="50.0" />
                </font>
             </Label>
-            <Button layoutX="263.0" layoutY="180.0" mnemonicParsing="false" onAction="#showSpinner" text="New Game" />
-            <Button layoutX="262.0" layoutY="230.0" mnemonicParsing="false" onAction="#showLoadGame" text="Load Game" />
-            <Button layoutX="271.0" layoutY="280.0" mnemonicParsing="false" onAction="#showSettings" text="Settings" />
-            <Button layoutX="273.0" layoutY="330.0" mnemonicParsing="false" onAction="#quit" text="Quit" />
+            <Button layoutX="250.0" layoutY="180.0" mnemonicParsing="false" onAction="#showSpinner" styleClass="main-buttons" stylesheets="@Style.css" text="New Game" />
+            <Button layoutX="250.0" layoutY="230.0" mnemonicParsing="false" onAction="#showLoadGame" styleClass="main-buttons" stylesheets="@Style.css" text="Load Game" />
+            <Button layoutX="250.0" layoutY="280.0" mnemonicParsing="false" onAction="#showSettings" styleClass="main-buttons" stylesheets="@Style.css" text="Settings" />
+            <Button layoutX="250.0" layoutY="330.0" mnemonicParsing="false" onAction="#quit" styleClass="main-buttons" stylesheets="@Style.css" text="Quit" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="spinner_AP" prefHeight="400.0" prefWidth="600.0" visible="false">
+      <AnchorPane fx:id="spinner_AP" prefHeight="400.0" prefWidth="600.0" styleClass="allBackgrounds" stylesheets="@Style.css" visible="false">
          <children>
             <Spinner fx:id="playerCount" layoutX="258.0" layoutY="200.0" prefHeight="26.0" prefWidth="84.0" />
             <Label layoutX="169.0" layoutY="122.0" prefHeight="52.0" prefWidth="263.0" text="How Many people are playing?">
@@ -30,27 +30,27 @@
                   <Font size="19.0" />
                </font>
             </Label>
-            <Button layoutX="521.0" layoutY="343.0" mnemonicParsing="false" onAction="#showPlayerCount" text="Next" />
-            <Button layoutX="27.0" layoutY="343.0" mnemonicParsing="false" onAction="#showMainMenu" text="Back" />
+            <Button layoutX="460.0" layoutY="342.0" mnemonicParsing="false" onAction="#showPlayerCount" styleClass="main-buttons" stylesheets="@Style.css" text="Next" />
+            <Button layoutX="40.0" layoutY="343.0" mnemonicParsing="false" onAction="#showMainMenu" styleClass="main-buttons" text="Back" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="playerCount_AP" prefHeight="400.0" prefWidth="600.0" visible="false">
+      <AnchorPane fx:id="playerCount_AP" prefHeight="400.0" prefWidth="600.0" styleClass="allBackgrounds" stylesheets="@Style.css" visible="false">
          <children>
-            <TextField fx:id="player1" layoutX="235.0" layoutY="128.0" promptText="Player 1" visible="false" />
-            <TextField fx:id="player3" layoutX="217.0" layoutY="187.0" promptText="Player 3" visible="false" />
-            <TextField fx:id="player5" layoutX="209.0" layoutY="239.0" promptText="Player 5" visible="false" />
-            <TextField fx:id="player7" layoutX="205.0" layoutY="307.0" promptText="Player 7" visible="false" />
-            <TextField fx:id="player2" layoutX="392.0" layoutY="127.0" promptText="Player 2" visible="false" />
-            <TextField fx:id="player4" layoutX="383.0" layoutY="186.0" promptText="Player 4" visible="false" />
-            <TextField fx:id="player6" layoutX="388.0" layoutY="240.0" promptText="Player 6" visible="false" />
-            <TextField fx:id="player8" layoutX="386.0" layoutY="308.0" promptText="player 8" visible="false" />
-            <Button layoutX="57.0" layoutY="338.0" mnemonicParsing="false" onAction="#showGame" prefHeight="29.0" prefWidth="62.0" text="Play" />
-            <Label layoutX="30.0" layoutY="273.0" text="All done?">
+            <TextField fx:id="player1" layoutX="90.0" layoutY="105.0" promptText="Player 1" styleClass="allTextFields" visible="false" />
+            <TextField fx:id="player2" layoutX="358.0" layoutY="105.0" promptText="Player 2" styleClass="allTextFields" visible="false" />
+            <TextField fx:id="player3" layoutX="90.0" layoutY="155.0" promptText="Player 3" styleClass="allTextFields" visible="false" />
+            <TextField fx:id="player4" layoutX="358.0" layoutY="155.0" promptText="Player 4" styleClass="allTextFields" visible="false" />
+            <TextField fx:id="player5" layoutX="90.0" layoutY="205.0" promptText="Player 5" styleClass="allTextFields" visible="false" />
+            <TextField fx:id="player6" layoutX="358.0" layoutY="205.0" promptText="Player 6" styleClass="allTextFields" visible="false" />
+            <TextField fx:id="player7" layoutX="90.0" layoutY="255.0" promptText="Player 7" styleClass="allTextFields" visible="false" />
+            <TextField fx:id="player8" layoutX="358.0" layoutY="255.0" promptText="player 8" styleClass="allTextFields" visible="false" />
+            <Button layoutX="460.0" layoutY="342.0" mnemonicParsing="false" onAction="#showGame" prefHeight="29.0" prefWidth="62.0" styleClass="main-buttons" text="Play" />
+            <Label layoutX="169.0" layoutY="24.0" text="Fill Out Player Names!">
                <font>
                   <Font size="27.0" />
                </font>
             </Label>
-            <Button layoutX="31.0" layoutY="28.0" mnemonicParsing="false" onAction="#showSpinner" text="Back" />
+            <Button layoutX="40.0" layoutY="342.0" mnemonicParsing="false" onAction="#showSpinner" styleClass="main-buttons" text="Back" />
          </children>
       </AnchorPane>
    </children>

@@ -186,7 +186,7 @@ public class GamePlayController implements Initializable
         }
         else
         {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Must Move To End Turn");
+            Alert alert = DButils.makeAlert(2, "Must Move To End Turn");
             alert.show();
         }
     }
@@ -261,7 +261,8 @@ public class GamePlayController implements Initializable
         }
         else
         {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Can only roll once a turn unless rolled doubles");
+            Alert alert = DButils.makeAlert(2, "Can only roll once a turn unless rolled doubles");
+            alert.show();
         }
     }
 
@@ -290,40 +291,13 @@ public class GamePlayController implements Initializable
 
         switch (imageViewSplit[2].substring(0, imageViewSplit[2].indexOf(",")))
         {
-            case "one" ->
-            {
-                return 1;
-            }
-
-            case "two" ->
-            {
-                return 2;
-            }
-
-            case "three" ->
-            {
-                return 3;
-            }
-
-            case "four" ->
-            {
-                return 4;
-            }
-
-            case "five" ->
-            {
-                return 5;
-            }
-
-            case "six" ->
-            {
-                return 6;
-            }
-
-            default ->
-            {
-                return 7;
-            }
+            case "one" -> { return 1; }
+            case "two" -> { return 2; }
+            case "three" ->  { return 3; }
+            case "four" ->  { return 4; }
+            case "five" ->  { return 5; }
+            case "six" ->  { return 6; }
+            default ->  { return 7; }
         }
     }
 
@@ -438,14 +412,15 @@ public class GamePlayController implements Initializable
         Cell cellToBuy = cellList.get(currentPlayer.getPosition());
         if(!hasMoved)
         {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Players can only purchase after they move.");
+            Alert alert = DButils.makeAlert(2, "Players can only purchase after they move.");
             alert.show();
             return;
         }
         if(cellToBuy.isOwned())
         {
-            Alert alert = new Alert(Alert.AlertType.ERROR,
+            Alert alert = DButils.makeAlert(3,
                     ("This property is already owned by " + cellToBuy.getOwnerName()));
+            alert.show();
             return;
         }
 

@@ -82,7 +82,7 @@ public class GameController implements Initializable
         {
             if (nameInputs[i].getText().isEmpty() || nameInputs[i].getText().equals(" "))
             {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "All Players Must Have A Valid Name");
+                Alert alert =DButils.makeAlert(3,"All Players Must Have A Valid Name");
                 alert.show();
                 return;
             }
@@ -130,7 +130,7 @@ public class GameController implements Initializable
 
     public void showSettings()
     {
-        Alert alert = new Alert(Alert.AlertType.ERROR,
+        Alert alert = DButils.makeAlert(3,
                 "This game is perfect as is, so there is no option to change part of this masterpiece");
         alert.show();
     }
@@ -139,7 +139,7 @@ public class GameController implements Initializable
     {
         ButtonType confirm = new ButtonType("Yep");
         ButtonType decline = new ButtonType("Nope");
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Afraid to lose?");
+        Alert alert = DButils.makeAlert(2, "Are you afraid to lose?");
         alert.getButtonTypes().setAll(confirm, decline);
         Optional<ButtonType> result = alert.showAndWait();
         if(result.get() == confirm)

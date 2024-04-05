@@ -1,6 +1,7 @@
 package com.example.monopoly_tm;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextInputDialog;
 
 import java.sql.*;
@@ -36,6 +37,24 @@ public class DButils
         c.close();
         p.close();
         r.close();
+    }
+
+    public static Alert makeAlert(int alertType, String alertBodyText)
+    {
+        Alert newAlert;
+        switch (alertType)
+        {
+            case 1 -> newAlert = new Alert(Alert.AlertType.INFORMATION, alertBodyText);
+            case 2 -> newAlert = new Alert(Alert.AlertType.CONFIRMATION, alertBodyText);
+            case 3 -> newAlert = new Alert(Alert.AlertType.ERROR, alertBodyText);
+            case 4 -> newAlert = new Alert(Alert.AlertType.WARNING, alertBodyText);
+            default -> newAlert = new Alert(Alert.AlertType.NONE);
+
+        }
+        DialogPane dialogPane = newAlert.getDialogPane();
+        dialogPane.getStylesheets().add(DButils.class.getResource("Style.css").toExternalForm());
+        dialogPane.getStyleClass().add("myDialog");
+        return newAlert;
     }
     // endregion
 
@@ -187,7 +206,7 @@ public class DButils
             if (rs.isBeforeFirst())
             {
                 System.out.println("failure");
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Password is Already in Use");
+                Alert alert = makeAlert(3, "Password is Already in Use");
                 alert.showAndWait();
                 closeUtils(rs, ps);
                 return 0;

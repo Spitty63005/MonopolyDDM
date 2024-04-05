@@ -1,0 +1,46 @@
+@font-face{
+    font-family: "MKabel";
+    src: url("Fonts/MKAbel.ttf");
+}
+
+#main-title{
+    -fx-background-color: red;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 70px;
+    -fx-pref-width: 330;
+    -fx-font-family: MKAbel;
+}
+
+.main-buttons{
+    -fx-background-color: rgb(49, 144, 110);
+    -fx-text-fill: black;
+    -fx-pref-width: 100px;
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-cursor: hand;
+}
+.allBackgrounds{
+    -fx-background-color: rgba(202,232,224,255);
+}
+
+.allTextFields{
+    -fx-background-color: rgb(49, 144, 110);
+    -fx-text-fill: black;
+    -fx-prompt-text-fill: black;
+}
+.myDialog {
+    -fx-background-color: rgba(202,232,224,255);
+    -fx-text-fill: black;
+}
+.myDialog > * {
+    -fx-background-color: rgba(202,232,224,255);
+}
+.myDialog > *.button-bar > *.container > Button{
+    -fx-background-color: rgb(49, 144, 110);
+    -fx-text-fill: black;
+    -fx-pref-width: 100px;
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-cursor: hand;
+}
