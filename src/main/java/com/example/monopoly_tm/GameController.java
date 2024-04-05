@@ -4,10 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -16,6 +13,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class GameController implements Initializable
@@ -139,9 +137,13 @@ public class GameController implements Initializable
 
     public void quit()
     {
+        ButtonType confirm = new ButtonType("Yep");
+        ButtonType decline = new ButtonType("Nope");
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Afraid to lose?");
-        alert.showAndWait();
-        System.exit(0);
+        alert.getButtonTypes().setAll(confirm, decline);
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.get() == confirm)
+            System.exit(0);
     }
 
 
