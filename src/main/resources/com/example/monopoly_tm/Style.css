@@ -3,6 +3,13 @@
     src: url("Fonts/MKAbel.ttf");
 }
 
+/* BORDER */
+/*.main-buttons, .game-buttons, .myDialog > *.button-bar > *.container > Button, .roll-spaces-info*/
+.uniform-border{
+    -fx-border-width: 1;
+    -fx-border-color: black;
+}
+
 #main-title{
     -fx-background-color: red;
     -fx-text-fill: white;
@@ -18,6 +25,11 @@
     -fx-pref-width: 100px;
     -fx-border-width: 1;
     -fx-border-color: black;
+    -fx-cursor: hand;
+}
+.game-buttons{
+    -fx-text-fill: black;
+    -fx-background-color: rgb(49, 144, 110);
     -fx-cursor: hand;
 }
 .allBackgrounds{
@@ -40,7 +52,17 @@
     -fx-background-color: rgb(49, 144, 110);
     -fx-text-fill: black;
     -fx-pref-width: 100px;
-    -fx-border-width: 1;
-    -fx-border-color: black;
     -fx-cursor: hand;
+}
+.roll-spaces-info, .player-owns, .game-log, .other-info{
+    -fx-background-color: rgba(49, 144, 110, 0.5);
+}
+.general-text{
+
+}
+.header-text{
+    -fx-background-color: rgba(49, 144, 110, 0.5);
+}
+.other-info-buttons{
+    -fx-pref-width: 146;
 }

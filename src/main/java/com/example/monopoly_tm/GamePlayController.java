@@ -28,6 +28,7 @@ import java.io.*;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 
@@ -64,7 +65,7 @@ public class GamePlayController implements Initializable
 
     boolean doubles = false;
 
-    static ArrayList<Players> playerList = new ArrayList<Players>();
+    static ArrayList<Players> playerList = new ArrayList<>();
 
 //    these two arrays are parallel
     Pane[] paneList;
@@ -124,7 +125,7 @@ public class GamePlayController implements Initializable
             setDieLists();
         }
         catch(Exception ex){
-            System.out.println(ex.toString());
+            System.out.println(ex);
         }
 
         changePlayer(currentPlayer);
@@ -136,14 +137,77 @@ public class GamePlayController implements Initializable
                 Cell_28_pane, Cell_29_pane, go_to_jail, Cell_31_pane, Cell_32_pane, Cell_33_pane, Cell_34_pane,
                 Cell_35_pane, Cell_36_pane, Cell_37_pane, Cell_38_pane, Cell_39_pane};
 
-        for (Players p:
-             playerList)
+
+
+        makePlayerPieces(playerList.size());
+    }
+
+    /*
+     *   Make a method to format the player pieces dynamically
+     * divide the dimensions with the amount of players
+     * use that value as the space between for x and y
+     *
+     * possible issues: TOO BIG
+     * */
+    void makePlayerPieces(int playerCount)
+    {
+        Pane start = paneList[0];
+        double x = start.getPrefWidth();
+        double y = start.getPrefHeight();
+        System.out.println(x);
+
+        double gapX = x / playerCount;
+        double gapY = y / playerCount;
+        System.out.println(gapX);
+        double displacementX;
+        double displacementY;
+
+        for (int i = 0; i < playerList.size(); i++)
         {
+            Players p = playerList.get(i);
+            if (playerList.indexOf(p) == 0)
+            {
+                System.out.println(p.getPlayerPiece().getWidth());
+
+                displacementX = gapX - (p.getPlayerPiece().getWidth());
+
+                System.out.println(displacementX);
+                displacementY = gapY - (p.getPlayerPiece().getHeight());
+
+                p.moveRectInCell(displacementX, displacementY);
+                System.out.println(p.getPlayerPiece().getX());
+            }
+            else
+            {
+                switch(i)
+                {
+                    case 1, 2 ->
+                    {
+                        displacementX = playerList.get(i-1).getPlayerPiece().getX() + gapX;
+                        displacementX -= (p.getPlayerPiece().getWidth()/2);
+                        p.moveRectInCell(displacementX, 5);
+                    }
+
+                    case 3, 4, 5 ->
+                    {
+                        y = playerList.get(i-1).getPlayerPiece().getHeight() + gapY;
+                        x =playerList.get(i-3).getPlayerPiece().getX();
+                        p.moveRectInCell(x, y);
+                    }
+
+                    case 6, 7, 8 ->
+                    {
+
+                    }
+                }
+
+            }
             paneList[0].getChildren().add(p.getPlayerPiece());
+//            playerList.get(i-1).getPlayerPiece().getHeight();
         }
     }
 
-//region turn start and end
+    //region turn start and end
     private void changePlayer(Players currentPlayer)
     {
         int currentPlayerIndex = playerList.indexOf(currentPlayer);
@@ -152,20 +216,11 @@ public class GamePlayController implements Initializable
 
         String name = playerList.get(currentPlayerIndex).getName();
         int balance = playerList.get(currentPlayerIndex).getBalance();
-        ArrayList<Property> properties = playerList.get(currentPlayerIndex).getProperties();
 
         current_player_info_LBL.setText(name + " has $" + balance);
         current_player_name_LBL.setText(name + " owns:");
 
-        StringBuilder currentPlayerOwns = new StringBuilder();
-        for(Property p: properties)
-        {
-            currentPlayerOwns.append("• ").append(p.getName()).append("\n");
-        }
-        if(currentPlayerOwns.isEmpty())
-            currentPlayerOwns.append("None LMAO HOMELESS");
-        current_player_properties_LBL.setText(String.valueOf(currentPlayerOwns));
-
+        updateAllText();
         player_land_space_LBL.setText("Roll the dice to move");
 
         hasMoved = false;
@@ -193,7 +248,7 @@ public class GamePlayController implements Initializable
     //endregion
 
 
-//region startOfGame
+    //region startOfGame
 
     public static void showGameBoard() throws IOException
     {
@@ -242,7 +297,7 @@ public class GamePlayController implements Initializable
 
     //endregion
 
-//region dice
+    //region dice
 
     public void rollDice(ActionEvent ae)
     {
@@ -254,10 +309,7 @@ public class GamePlayController implements Initializable
             timeline.play();
 
 
-            timeline.setOnFinished((e) ->
-            {
-                updateDieImages();
-            });
+            timeline.setOnFinished((e) -> { updateDieImages(); });
         }
         else
         {
@@ -330,10 +382,10 @@ public class GamePlayController implements Initializable
                 left_die_five, left_die_six};
     }
 
-//    endregion
+//endregion
 
 
-//region actions after roll
+    //region actions after roll
     private void movePiece(int amountToMove)
     {
         Pane startPane = paneList[getPlayerPosFromPaneList()];
@@ -343,11 +395,9 @@ public class GamePlayController implements Initializable
         currentPlayer.movePlayer(amountToMove);
 
         int endPaneInt = getPlayerPosFromPaneList();
-        Pane endPane = paneList[getPlayerPosFromPaneList()];
 
         movingAnimation(startPaneInt, endPaneInt);
         paneList[currentPlayer.getPosition()].getChildren().add(currentPlayer.getPlayerPiece());
-
         landingLocationFunctions();
     }
 
@@ -369,6 +419,33 @@ public class GamePlayController implements Initializable
             case "chance" -> drawChanceCard();
             case "go-to-jail" -> goToJail();
         }
+        player_land_space_LBL.setText(
+                landSpaceInfo(cell));
+        updateAllText();
+    }
+
+    private void updateAllText()
+    {
+        current_player_info_LBL.setText(currentPlayer.getName() + " has $" + currentPlayer.getBalance());
+        current_player_properties_LBL.setText("");
+
+        for (int i = 0; i < currentPlayer.getProperties().size(); i++)
+        {
+            current_player_properties_LBL.setText(current_player_properties_LBL.getText()
+                    + "\n" + currentPlayer.getProperties().get(i).getName());
+        }
+    }
+
+    private String landSpaceInfo(Cell currLoc)
+    {
+        String textForLanding = "You have landed on:\n"+ currLoc.getName();
+        boolean isPropertyType = currLoc.isOwned && (currLoc.getClass().getSimpleName()).equalsIgnoreCase("property");
+        if(currLoc.isOwned() && isPropertyType)
+        {
+            textForLanding += "\nThis space is owned by:\n" + currLoc.getOwnerName()
+                    + "\nRent is $" + currLoc.getRent();
+        }
+        return textForLanding;
     }
 
     private void goToJail()
@@ -429,8 +506,10 @@ public class GamePlayController implements Initializable
             {
                 currentPlayer.setBalance(currentPlayer.getBalance()-cellToBuy.getCost());
                 cellToBuy.setOwned(true, currentPlayer);
-                System.out.println("Sucessful purchase");
+                currentPlayer.buyProperty(cellToBuy);
+                System.out.println("Successful purchase");
                 updateGameLog(currentPlayer.getName(), cellToBuy.getName(), "buyprop");
+                updateAllText();
             }
         }
     }
@@ -481,20 +560,23 @@ public class GamePlayController implements Initializable
     {
         String pressedButton = e.getSource().toString();
 
-        td.showAndWait();
+        Optional<String> result = td.showAndWait();
 
-        String pass = td.getEditor().getText();
-
-        DButils.completeSave(playerList, cellList, pass, td);
-
-        if(pressedButton.contains("&"))
+        if (result.isPresent())
         {
-            try
+            String pass = td.getEditor().getText();
+
+            DButils.completeSave(playerList, cellList, pass, td);
+
+            if (pressedButton.contains("&"))
             {
-                quit(e);
-            } catch (IOException ex)
-            {
-                throw new RuntimeException(ex);
+                try
+                {
+                    quit(e);
+                } catch (IOException ex)
+                {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }

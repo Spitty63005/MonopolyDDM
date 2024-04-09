@@ -81,18 +81,18 @@ public class DButils
                 saveGame(conn, password);
                 savePlayers(conn, players, password);
                 saveOwnedProperties(conn, players, properties, password);
-                savePlayeLocations(conn, players, password);
+                savePlayerLocations(conn, players, password);
             }
         }
 
         conn.close();
     }
 
-    private static void savePlayeLocations(Connection conn, ArrayList<Players> players, String password) throws SQLException
+    private static void savePlayerLocations(Connection conn, ArrayList<Players> players, String password) throws SQLException
     {
         PreparedStatement ps;
-        ps = conn.prepareStatement("SET FOREIGN_KEY_CHECK=0;");
-        ps.executeUpdate();
+//        ps = conn.prepareStatement("SET FOREIGN_KEY_CHECK=0;");
+//        ps.executeUpdate();
 
         ps = conn.prepareStatement("INSERT INTO Location VALUES(?, ?, ?)");
         ps.setInt(1, getGameId(password, conn));
@@ -148,7 +148,6 @@ public class DButils
         for (int i = 0; i < players.size(); i++)
         {
             Players p = players.get(i);
-            System.out.println(p.getName());
 
             ps.setInt(2, i);
             ps.setInt(3, players.get(i).getBalance());
@@ -163,17 +162,17 @@ public class DButils
     {
         PreparedStatement ps;
         ResultSet rs;
+        int result;
         ps = conn.prepareStatement("SELECT gameId FROM Games WHERE gamePwd = ?");
-        System.out.println(password);
         ps.setString(1, password);
         printGamesTable();
         rs = ps.executeQuery();
 
         if (rs.next())
         {
-            System.out.println("autism creature yippie!");
+            result = rs.getInt("gameId");
             closeUtils(rs, ps);
-            return rs.getInt("gameId");
+            return result;
         }
         closeUtils(rs, ps);
         return -1;
@@ -194,7 +193,6 @@ public class DButils
 
     private static int verifyPwd(String password) throws SQLException
     {
-        System.out.println("In verifyPwd");
         Connection conn = connectDB();
         PreparedStatement ps;
         ResultSet rs;
@@ -205,7 +203,6 @@ public class DButils
             rs = ps.executeQuery();
             if (rs.isBeforeFirst())
             {
-                System.out.println("failure");
                 Alert alert = makeAlert(3, "Password is Already in Use");
                 alert.showAndWait();
                 closeUtils(rs, ps);
@@ -213,7 +210,6 @@ public class DButils
             }
             if (rs.next())
             {
-                System.out.println("true from verifyPwd");
                 closeUtils(rs, ps);
                 return 1;
             }
@@ -227,7 +223,6 @@ public class DButils
 
     private static void saveGame(Connection conn, String password) throws SQLException
     {
-        System.out.println("In saveGame");
         PreparedStatement ps;
 
         ps = conn.prepareStatement("INSERT INTO Games (gamePwd) VALUES (?)");

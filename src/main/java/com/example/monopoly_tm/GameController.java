@@ -8,8 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,9 +34,6 @@ public class GameController implements Initializable
             Color.YELLOW, Color.PINK, Color.ORANGE, Color.BEIGE};
 
     ArrayList<Players> currentPlayers = new ArrayList<>();
-
-    Stage stage;
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
@@ -82,11 +77,21 @@ public class GameController implements Initializable
         {
             if (nameInputs[i].getText().isEmpty() || nameInputs[i].getText().equals(" "))
             {
-                Alert alert =DButils.makeAlert(3,"All Players Must Have A Valid Name");
+                Alert alert = DButils.makeAlert(3, "All Players Must Have A Valid Name");
                 alert.show();
                 return;
             }
-            rect = new Rectangle(50, 50, playerColors[i]);
+            switch (amountOfPlayers)
+            {
+                case 2 -> {rect = new Rectangle(50, 50, playerColors[i]);}
+                case 3 -> {rect = new Rectangle(45, 45, playerColors[i]);}
+                case 4 -> {rect = new Rectangle(40, 40, playerColors[i]);}
+                case 5 -> {rect = new Rectangle(35, 35, playerColors[i]);}
+                case 6 -> {rect = new Rectangle(30, 30, playerColors[i]);}
+                case 7 -> {rect = new Rectangle(25, 25, playerColors[i]);}
+                case 8 -> {rect = new Rectangle(20, 20, playerColors[i]);}
+                default -> {rect = new Rectangle(34, 34, playerColors[i]);}
+            }
             currentPlayers.add(new Players(nameInputs[i].getText(), rect));
         }
 

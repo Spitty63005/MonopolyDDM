@@ -2,7 +2,6 @@ package com.example.monopoly_tm;
 
 public class Property extends Cell
 {
-    boolean isOwned = false;
     String propertyColor;
 
     int houseCost;
@@ -18,7 +17,8 @@ public class Property extends Cell
     }
 
 
-
-
-
+    public int getRent()
+    {
+        return rent[0];
+    }
 }

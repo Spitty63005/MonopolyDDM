@@ -1,16 +1,14 @@
 package com.example.monopoly_tm;
 
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-
 import java.util.ArrayList;
 
 public class Players
 {
     String name;
     int balance;
-    ArrayList<Property> properties = new ArrayList<>();
+    ArrayList<Cell> properties = new ArrayList<>();
 
     boolean hasDiceRolled = false;
 
@@ -25,17 +23,17 @@ public class Players
         balance = 1500;
     }
 
-    public void buyProperty(Property property)
+    public void buyProperty(Cell property)
     {
         properties.add(property);
     }
 
-    public void sellProperty(Property property)
+    public void sellProperty(Cell property)
     {
         properties.remove(property);
     }
 
-    public ArrayList<Property> getProperties()
+    public ArrayList<Cell> getProperties()
     {
         return properties;
     }
@@ -62,12 +60,11 @@ public class Players
         this.hasDiceRolled = hasDiceRolled;
     }
 
-    public int movePlayer(int distance)
+    public void movePlayer(int distance)
     {
         position += distance;
         if(position >= 40)
             position -= 40;
-        return position;
     }
 
     public int getPosition()
@@ -78,6 +75,12 @@ public class Players
     public Rectangle getPlayerPiece()
     {
         return playerPiece;
+    }
+
+    public void moveRectInCell(double x, double y)
+    {
+        playerPiece.setX(x);
+        playerPiece.setY(y);
     }
 
     public Paint getColor()

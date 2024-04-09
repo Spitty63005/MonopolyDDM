@@ -54,4 +54,9 @@ public class Cell
     {
         return owner;
     }
+
+    public int getRent()
+    {
+        return 0;
+    }
 }

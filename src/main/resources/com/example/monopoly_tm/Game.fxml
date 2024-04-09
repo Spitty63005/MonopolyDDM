@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -14,45 +15,54 @@
    <children>
       <BorderPane fx:id="gameplay_BP" prefHeight="1090.0" prefWidth="1930.0">
          <right>
-            <AnchorPane prefHeight="1080.0" prefWidth="842.0" BorderPane.alignment="CENTER">
+            <AnchorPane prefHeight="1080.0" prefWidth="842.0" styleClass="allBackgrounds" stylesheets="@Style.css" BorderPane.alignment="CENTER">
                <children>
-                  <Pane fx:id="current_player_properties" layoutX="311.0" layoutY="261.0" prefHeight="456.0" prefWidth="484.0">
+                  <Pane fx:id="current_player_properties" layoutX="320.0" layoutY="136.0" prefHeight="456.0" prefWidth="486.0" stylesheets="@Style.css">
                      <children>
-                        <Label fx:id="current_player_name_LBL" layoutX="23.0" layoutY="18.0" prefHeight="101.0" prefWidth="401.0" text="{CurrentPlayer} Owns:">
+                        <Label fx:id="current_player_name_LBL" alignment="CENTER" layoutY="18.0" prefHeight="101.0" prefWidth="484.0" stylesheets="@Style.css" text="{CurrentPlayer} Owns:">
                            <font>
                               <Font size="30.0" />
                            </font>
                         </Label>
-                        <Label fx:id="current_player_properties_LBL" layoutX="23.0" layoutY="94.0" prefHeight="211.0" prefWidth="401.0" text="{Current Player's properties in form of list}" wrapText="true">
+                        <Label fx:id="current_player_properties_LBL" alignment="CENTER" layoutX="12.0" layoutY="94.0" prefHeight="341.0" prefWidth="454.0" text="{Current Player's properties in form of list}" wrapText="true">
                            <font>
-                              <Font size="30.0" />
+                              <Font size="20.0" />
                            </font>
                         </Label>
                      </children>
+                     <styleClass>
+                        <String fx:value="player-owns" />
+                        <String fx:value="uniform-border" />
+                     </styleClass>
                   </Pane>
-                  <Label fx:id="current_player_info_LBL" layoutX="358.0" layoutY="90.0" prefHeight="101.0" prefWidth="401.0" text="{CurrentPlayer} has ${dollars}">
+                  <Label fx:id="current_player_info_LBL" alignment="CENTER" layoutX="320.0" layoutY="32.0" prefHeight="78.0" prefWidth="486.0" style="-fx-background-color: rgba(49, 144, 110, 0.5);;" stylesheets="@Style.css" text="{CurrentPlayer} has ${dollars}">
                      <font>
                         <Font size="30.0" />
                      </font>
+                     <styleClass>
+                        <String fx:value="header-text" />
+                        <String fx:value="uniform-border" />
+                     </styleClass>
                   </Label>
-                  <Pane layoutX="20.0" layoutY="32.0" prefHeight="744.0" prefWidth="280.0">
+                  <Pane layoutX="20.0" layoutY="32.0" prefHeight="560.0" prefWidth="280.0" stylesheets="@Style.css">
                      <children>
-                        <Button layoutX="23.0" layoutY="25.0" mnemonicParsing="false" onAction="#purchase" prefHeight="48.0" prefWidth="77.0" text="Buy" />
-                        <Button layoutX="14.0" layoutY="688.0" mnemonicParsing="false" onAction="#endTurn" prefHeight="48.0" prefWidth="77.0" text="End Turn" />
-                        <Button layoutX="177.0" layoutY="25.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="77.0" text="Sell" />
-                        <Button layoutX="188.0" layoutY="688.0" mnemonicParsing="false" onAction="#rollDice" prefHeight="48.0" prefWidth="77.0" text="Roll Dice" />
-                        <Label fx:id="player_land_space_LBL" layoutX="29.0" layoutY="82.0" prefHeight="345.0" prefWidth="223.0" text="You Currently are on {SPACE_NAME} ({IT IS OWNED BY/ NOT OWNED}) {YOU OWE $ MONEY}" wrapText="true">
+                        <Button layoutX="51.0" layoutY="165.0" mnemonicParsing="false" onAction="#endTurn" prefHeight="48.0" prefWidth="77.0" stylesheets="@Style.css" text="End Turn">
+                           <styleClass>
+                              <String fx:value="game-buttons" />
+                              <String fx:value="uniform-border" />
+                           </styleClass></Button>
+                        <Button layoutX="152.0" layoutY="165.0" mnemonicParsing="false" onAction="#rollDice" prefHeight="48.0" prefWidth="77.0" stylesheets="@Style.css" text="Roll Dice">
+                           <styleClass>
+                              <String fx:value="game-buttons" />
+                              <String fx:value="uniform-border" />
+                           </styleClass></Button>
+                        <Label fx:id="player_land_space_LBL" alignment="TOP_CENTER" layoutY="243.0" prefHeight="183.0" prefWidth="280.0" styleClass="general-text" stylesheets="@Style.css" text="You Currently are on {SPACE_NAME} ({IT IS OWNED BY/ NOT OWNED}) {YOU OWE $ MONEY}" textAlignment="CENTER" wrapText="true">
                            <font>
-                              <Font size="30.0" />
+                              <Font size="20.0" />
                            </font>
                         </Label>
-                        <StackPane fx:id="left_stack" layoutX="13.0" layoutY="515.0">
+                        <StackPane fx:id="left_stack" layoutX="8.0" layoutY="13.0">
                            <children>
-                              <ImageView fx:id="left_die_six" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_Six.png" />
-                                 </image>
-                              </ImageView>
                               <ImageView fx:id="left_die_five" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
                                  <image>
                                     <Image url="@images/Die/Rolled_Five.png" />
@@ -78,15 +88,15 @@
                                     <Image url="@images/Die/Rolled_One.png" />
                                  </image>
                               </ImageView>
-                           </children>
-                        </StackPane>
-                        <StackPane fx:id="right_stack" layoutX="140.0" layoutY="515.0">
-                           <children>
-                              <ImageView fx:id="right_die_one" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="left_die_six" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@images/Die/Rolled_One.png" />
+                                    <Image url="@images/Die/Rolled_Six.png" />
                                  </image>
                               </ImageView>
+                           </children>
+                        </StackPane>
+                        <StackPane fx:id="right_stack" layoutX="138.0" layoutY="13.0">
+                           <children>
                               <ImageView fx:id="die_one_IV12" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
                                  <image>
                                     <Image url="@images/Die/Rolled_Five.png" />
@@ -117,25 +127,68 @@
                                     <Image url="@images/Die/Rolled_Three.png" />
                                  </image>
                               </ImageView>
+                              <ImageView fx:id="right_die_one" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@images/Die/Rolled_One.png" />
+                                 </image>
+                              </ImageView>
                            </children>
                         </StackPane>
+                        <Button layoutX="51.0" layoutY="441.0" mnemonicParsing="false" onAction="#purchase" prefHeight="48.0" prefWidth="77.0" stylesheets="@Style.css" text="Buy">
+                           <styleClass>
+                              <String fx:value="game-buttons" />
+                              <String fx:value="uniform-border" />
+                           </styleClass>
+                        </Button>
+                        <Button layoutX="162.0" layoutY="441.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="77.0" stylesheets="@Style.css" text="Sell">
+                           <styleClass>
+                              <String fx:value="game-buttons" />
+                              <String fx:value="uniform-border" />
+                           </styleClass>
+                        </Button>
                      </children>
+                     <styleClass>
+                        <String fx:value="roll-spaces-info" />
+                        <String fx:value="uniform-border" />
+                     </styleClass>
                   </Pane>
-                  <Pane layoutX="529.0" layoutY="839.0" prefHeight="211.0" prefWidth="292.0">
+                  <Pane layoutX="514.0" layoutY="664.0" prefHeight="340.0" prefWidth="292.0" stylesheets="@Style.css">
                      <children>
-                        <Label layoutX="110.0" layoutY="28.0" text="Other Info">
+                        <Label alignment="CENTER" layoutY="28.0" prefHeight="45.0" prefWidth="292.0" styleClass="general-text" stylesheets="@Style.css" text="Other Info">
                            <font>
                               <Font size="30.0" />
                            </font>
                         </Label>
-                        <Button layoutX="33.0" layoutY="94.0" mnemonicParsing="false" text="Other Player Info" />
-                        <Button layoutX="33.0" layoutY="156.0" mnemonicParsing="false" text="Game LeaderBoard" />
-                        <Button layoutX="215.0" layoutY="94.0" mnemonicParsing="false" onAction="#toggleSettings" text="Settings" />
+                        <Button layoutX="73.0" layoutY="75.0" mnemonicParsing="false" prefHeight="55.0" stylesheets="@Style.css" text="Other Player Info">
+                           <styleClass>
+                              <String fx:value="game-buttons" />
+                              <String fx:value="uniform-border" />
+                              <String fx:value="other-info-buttons" />
+                           </styleClass>
+                        </Button>
+                        <Button layoutX="73.0" layoutY="150.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="210.0" stylesheets="@Style.css" text="Game LeaderBoard">
+                           <styleClass>
+                              <String fx:value="game-buttons" />
+                              <String fx:value="uniform-border" />
+                              <String fx:value="other-info-buttons" />
+                           </styleClass>
+                        </Button>
+                        <Button layoutX="73.0" layoutY="225.0" mnemonicParsing="false" onAction="#toggleSettings" prefHeight="55.0" stylesheets="@Style.css" text="Settings">
+                           <styleClass>
+                              <String fx:value="game-buttons" />
+                              <String fx:value="uniform-border" />
+                              <String fx:value="other-info-buttons" />
+                           </styleClass>
+                        </Button>
                      </children>
+                     <styleClass>
+                        <String fx:value="other-info" />
+                        <String fx:value="uniform-border" />
+                     </styleClass>
                   </Pane>
-                  <Pane layoutX="33.0" layoutY="776.0" prefHeight="300.0" prefWidth="467.0">
+                  <Pane layoutX="20.0" layoutY="664.0" prefHeight="340.0" prefWidth="467.0" stylesheets="@Style.css">
                      <children>
-                        <Label layoutX="33.0" layoutY="14.0" text="Game Log">
+                        <Label layoutX="33.0" layoutY="14.0" styleClass="general-text" text="Game Log">
                            <font>
                               <Font size="30.0" />
                            </font>
@@ -169,14 +222,21 @@
                               </Label>
                            </children>
                         </Pane>
-                        <Label layoutX="187.0" layoutY="14.0" text="*Newest to Oldes" />
+                        <Label layoutX="190.0" layoutY="18.0" styleClass="general-text" text="*Newest to Oldest">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
                      </children>
+                     <styleClass>
+                        <String fx:value="game-log" />
+                        <String fx:value="uniform-border" />
+                     </styleClass>
                   </Pane>
                </children>
             </AnchorPane>
          </right>
          <center>
-            <AnchorPane prefHeight="1080.0" prefWidth="1074.0" style="-: red;" BorderPane.alignment="CENTER">
+            <AnchorPane prefHeight="1080.0" prefWidth="1074.0" style="-: red;" styleClass="allBackgrounds" stylesheets="@Style.css" BorderPane.alignment="CENTER">
                <children>
                   <ImageView fitHeight="1036.0" fitWidth="1059.0" pickOnBounds="true">
                      <image>
