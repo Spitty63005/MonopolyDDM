@@ -1,14 +1,17 @@
 package com.example.monopoly_tm;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Players
 {
     String name;
     int balance;
-    ArrayList<Cell> properties = new ArrayList<>();
+    ObservableList<Cell> properties = FXCollections.observableArrayList();
 
     boolean hasDiceRolled = false;
 
@@ -33,10 +36,11 @@ public class Players
         properties.remove(property);
     }
 
-    public ArrayList<Cell> getProperties()
+    public ObservableList<Cell> getProperties()
     {
         return properties;
     }
+    public ObservableList<Cell> getProps() { return (ObservableList<Cell>) properties;}
 
     public int getBalance()
     {

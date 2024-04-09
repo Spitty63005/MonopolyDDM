@@ -1,5 +1,6 @@
 package com.example.monopoly_tm;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextInputDialog;
@@ -61,7 +62,7 @@ public class DButils
     // region Save Game
     public static void completeSave(
             ArrayList<Players> players,
-            ArrayList<Cell> properties, String password, TextInputDialog td) throws SQLException
+            ObservableList<Cell> properties, String password, TextInputDialog td) throws SQLException
     {
 
         Connection conn = connectDB();
@@ -108,7 +109,7 @@ public class DButils
 
     private static void saveOwnedProperties(
             Connection conn, ArrayList<Players> players,
-            ArrayList<Cell> properties, String password) throws SQLException
+            ObservableList<Cell> properties, String password) throws SQLException
     {
         PreparedStatement ps;
 

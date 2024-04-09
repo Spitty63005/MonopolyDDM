@@ -2,6 +2,8 @@ package com.example.monopoly_tm;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,10 +11,10 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -27,15 +29,19 @@ import org.json.simple.parser.*;
 import java.io.*;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 
 public class GamePlayController implements Initializable
 {
     @FXML
     BorderPane gameplay_BP;
+
+    @FXML
+    TableView<Cell> sell_tbv;
+
+    @FXML
+    TableColumn<String, Cell> sell_property_name, sell_property_price;
 
     @FXML
     Pane go_Pane, Cell_1_pane, Cell_2_pane, Cell_3_pane, Cell_4_pane, Cell_5_pane, Cell_6_pane, Cell_7_pane,
@@ -69,7 +75,7 @@ public class GamePlayController implements Initializable
 
 //    these two arrays are parallel
     Pane[] paneList;
-    ArrayList<Cell> cellList = new ArrayList<>();
+    ObservableList<Cell> cellList = FXCollections.observableArrayList();
 
     static Players currentPlayer;
 
@@ -140,6 +146,8 @@ public class GamePlayController implements Initializable
 
 
         makePlayerPieces(playerList.size());
+
+        setPropertiesTable();
     }
 
     /*
@@ -434,6 +442,7 @@ public class GamePlayController implements Initializable
             current_player_properties_LBL.setText(current_player_properties_LBL.getText()
                     + "\n" + currentPlayer.getProperties().get(i).getName());
         }
+        setPropertiesTable();
     }
 
     private String landSpaceInfo(Cell currLoc)
@@ -512,6 +521,29 @@ public class GamePlayController implements Initializable
                 updateAllText();
             }
         }
+    }
+    private void setPropertiesTable()
+    {
+        ObservableList<Cell> listData;
+        listData = currentPlayer.getProps();
+
+
+        sell_property_name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        sell_property_price.setCellValueFactory(new PropertyValueFactory<>("cost"));
+
+        sell_tbv.setItems(listData);
+    }
+    public void ownedPropertyFunctions(ActionEvent e)
+    {
+        /*
+        * Open a menu that has a list of all your properties
+        * once you select one a sell, a trade, and a mortgage button will appear
+        * each will call a different method
+        * trade and mortgage will close the current menu and show a new respective one
+        * sell will just remove the property from the players class and make all instances of ownership for it false
+        * */
+
+
     }
 
     private void updateGameLog(String playerName, String propertyName, String type)
@@ -599,6 +631,23 @@ public class GamePlayController implements Initializable
         stage.setScene(scene);
         stage.show();
     }
+    //endregion
+
+    //region QoL
+    public void keybinds(KeyEvent e)
+    {
+        ActionEvent keyStrokeEvent = new ActionEvent();
+
+        switch (e.getCode())
+        {
+            case W -> rollDice(keyStrokeEvent);
+            case A -> ownedPropertyFunctions(keyStrokeEvent);
+            case S -> endTurn(keyStrokeEvent);
+            case D -> purchase(keyStrokeEvent);
+        }
+    }
+
+
     //endregion
 
 

@@ -21,4 +21,5 @@ public class Property extends Cell
     {
         return rent[0];
     }
+
 }

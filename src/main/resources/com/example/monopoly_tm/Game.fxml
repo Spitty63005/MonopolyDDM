@@ -3,6 +3,8 @@
 <?import java.lang.String?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -11,7 +13,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.monopoly_tm.GamePlayController">
+<AnchorPane onKeyReleased="#keybinds" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.monopoly_tm.GamePlayController">
    <children>
       <BorderPane fx:id="gameplay_BP" prefHeight="1090.0" prefWidth="1930.0">
          <right>
@@ -140,7 +142,7 @@
                               <String fx:value="uniform-border" />
                            </styleClass>
                         </Button>
-                        <Button layoutX="162.0" layoutY="441.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="77.0" stylesheets="@Style.css" text="Sell">
+                        <Button layoutX="162.0" layoutY="441.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="77.0" stylesheets="@Style.css" text="Trade">
                            <styleClass>
                               <String fx:value="game-buttons" />
                               <String fx:value="uniform-border" />
@@ -296,27 +298,64 @@
             </AnchorPane>
          </center>
       </BorderPane>
-      <Pane layoutX="775.0" layoutY="350.0" prefHeight="388.0" prefWidth="560.0" style="-fx-background-color: blue;" visible="false">
+      <StackPane layoutX="544.0" layoutY="300.0" prefHeight="516.0" prefWidth="786.0" styleClass="allBackgrounds" stylesheets="@Style.css">
          <children>
-            <Label fx:id="turn_change_lbl" layoutX="130.0" layoutY="58.0" prefHeight="45.0" prefWidth="280.0" text="{PlayerName}'s Turn!" textAlignment="CENTER">
-               <font>
-                  <Font size="30.0" />
-               </font>
-            </Label>
-            <Button layoutX="202.0" layoutY="288.0" mnemonicParsing="false" prefHeight="74.0" prefWidth="133.0" text="Okay!" />
+            <Pane layoutX="400.0" layoutY="152.0" prefHeight="388.0" prefWidth="560.0" stylesheets="@Style.css" visible="false">
+               <children>
+                  <Label fx:id="turn_change_lbl" layoutX="130.0" layoutY="58.0" prefHeight="45.0" prefWidth="280.0" text="{PlayerName}'s Turn!" textAlignment="CENTER">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                  </Label>
+                  <Button layoutX="202.0" layoutY="288.0" mnemonicParsing="false" prefHeight="74.0" prefWidth="133.0" text="Okay!" />
+               </children>
+               <styleClass>
+                  <String fx:value="menu-panes" />
+                  <String fx:value="uniform-border" />
+               </styleClass>
+            </Pane>
+            <Pane fx:id="settings_pane" layoutX="400.0" layoutY="152.0" prefHeight="388.0" prefWidth="560.0" stylesheets="@Style.css" visible="false">
+               <children>
+                  <Label fx:id="turn_change_lbl1" layoutX="215.0" layoutY="48.0" prefHeight="45.0" prefWidth="107.0" text="Settings" textAlignment="CENTER">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                  </Label>
+                  <Button layoutX="202.0" layoutY="288.0" mnemonicParsing="false" onAction="#toggleSettings" prefHeight="74.0" prefWidth="133.0" text="Back" />
+                  <Button layoutX="96.0" layoutY="157.0" mnemonicParsing="false" onAction="#save" prefHeight="74.0" prefWidth="133.0" text="Save" />
+                  <Button layoutX="299.0" layoutY="157.0" mnemonicParsing="false" onAction="#save" prefHeight="74.0" prefWidth="133.0" text="Save &amp; Quit" />
+               </children>
+               <styleClass>
+                  <String fx:value="menu-panes" />
+                  <String fx:value="uniform-border" />
+               </styleClass>
+            </Pane>
+            <Pane layoutX="10.0" layoutY="10.0" prefHeight="516.0" prefWidth="790.0" stylesheets="@Style.css">
+               <children>
+                  <Label fx:id="turn_change_lbl2" alignment="CENTER" layoutY="10.0" prefHeight="45.0" prefWidth="790.0" stylesheets="@Style.css" text="{PlayerName}'s Properties" textAlignment="CENTER">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                  </Label>
+                  <Pane layoutX="12.0" layoutY="71.0" prefHeight="314.0" prefWidth="760.0">
+                     <children>
+                        <TableView fx:id="sell_tbv" layoutX="230.0" prefHeight="314.0" prefWidth="300.0">
+                          <columns>
+                            <TableColumn fx:id="sell_property_name" prefWidth="150.0" resizable="false" text="Property" />
+                            <TableColumn fx:id="sell_property_price" prefWidth="150.0" resizable="false" text="Price" />
+                          </columns>
+                        </TableView>
+                     </children></Pane>
+                  <Button layoutX="109.0" layoutY="425.0" mnemonicParsing="false" styleClass="property-function-button" stylesheets="@Style.css" text="Button" />
+                  <Button layoutX="327.5" layoutY="425.0" mnemonicParsing="false" styleClass="property-function-button" stylesheets="@Style.css" text="Button" />
+                  <Button layoutX="546.0" layoutY="425.0" mnemonicParsing="false" styleClass="property-function-button" stylesheets="@Style.css" text="Button" />
+               </children>
+               <styleClass>
+                  <String fx:value="menu-panes" />
+                  <String fx:value="uniform-border" />
+               </styleClass>
+            </Pane>
          </children>
-      </Pane>
-      <Pane fx:id="settings_pane" layoutX="785.0" layoutY="360.0" prefHeight="388.0" prefWidth="560.0" style="-fx-background-color: blue;" visible="false">
-         <children>
-            <Label fx:id="turn_change_lbl1" layoutX="215.0" layoutY="48.0" prefHeight="45.0" prefWidth="107.0" text="Settings" textAlignment="CENTER">
-               <font>
-                  <Font size="30.0" />
-               </font>
-            </Label>
-            <Button layoutX="202.0" layoutY="288.0" mnemonicParsing="false" onAction="#toggleSettings" prefHeight="74.0" prefWidth="133.0" text="Back" />
-            <Button layoutX="96.0" layoutY="157.0" mnemonicParsing="false" onAction="#save" prefHeight="74.0" prefWidth="133.0" text="Save" />
-            <Button layoutX="299.0" layoutY="157.0" mnemonicParsing="false" onAction="#save" prefHeight="74.0" prefWidth="133.0" text="Save &amp; Quit" />
-         </children>
-      </Pane>
+      </StackPane>
    </children>
 </AnchorPane>

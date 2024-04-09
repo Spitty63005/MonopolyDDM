@@ -66,3 +66,9 @@
 .other-info-buttons{
     -fx-pref-width: 146;
 }
+.menu-panes{
+    -fx-background-color: rgba(49, 144, 110, 0.5);
+}
+.property-function-button{
+    -fx-pref-width: 131;
+}
