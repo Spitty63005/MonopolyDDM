@@ -14,7 +14,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -52,6 +54,8 @@ public class GamePlayController implements Initializable
             Cell_35_pane, Cell_36_pane, Cell_37_pane, Cell_38_pane, Cell_39_pane, settings_pane, game_log_pane;
 
     @FXML
+    AnchorPane dimming_ap;
+    @FXML
     Label current_player_info_LBL, current_player_name_LBL,
         current_player_properties_LBL, player_land_space_LBL;
 
@@ -60,7 +64,10 @@ public class GamePlayController implements Initializable
             left_die_one, left_die_two, left_die_three, left_die_four, left_die_five, left_die_six;
 
     @FXML
-    StackPane left_stack, right_stack;
+    StackPane left_stack, right_stack, menus_stack;
+
+    @FXML
+    Button roll_btn;
 
     TextInputDialog td = new TextInputDialog();
 
@@ -232,6 +239,7 @@ public class GamePlayController implements Initializable
         player_land_space_LBL.setText("Roll the dice to move");
 
         hasMoved = false;
+        roll_btn.setDisable(false);
     }
 
     public void endTurn(ActionEvent e)
@@ -309,6 +317,8 @@ public class GamePlayController implements Initializable
 
     public void rollDice(ActionEvent ae)
     {
+        roll_btn.setDisable(true);
+
         if(!hasMoved || doubles)
         {
             Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.07), e -> rollingFrame()));
@@ -396,6 +406,7 @@ public class GamePlayController implements Initializable
     //region actions after roll
     private void movePiece(int amountToMove)
     {
+
         Pane startPane = paneList[getPlayerPosFromPaneList()];
         startPane.getChildren().remove(currentPlayer.getPlayerPiece());
 
@@ -546,6 +557,21 @@ public class GamePlayController implements Initializable
 
     }
 
+    public void toggleGameMenus(ActionEvent keyStrokeEvent)
+    {
+        if(menus_stack.isVisible())
+        {
+            menus_stack.setVisible(false);
+            dimming_ap.setVisible(false);
+        }
+        else
+        {
+            menus_stack.setVisible(true);
+            dimming_ap.setVisible(true);
+        }
+
+    }
+
     private void updateGameLog(String playerName, String propertyName, String type)
     {
         Label firstLog = ((Label)game_log_pane.getChildren().get(0));
@@ -634,18 +660,24 @@ public class GamePlayController implements Initializable
     //endregion
 
     //region QoL
-    public void keybinds(KeyEvent e)
+    public void keybindings(KeyEvent e)
     {
         ActionEvent keyStrokeEvent = new ActionEvent();
 
-        switch (e.getCode())
+        if(!menus_stack.isVisible())
         {
-            case W -> rollDice(keyStrokeEvent);
-            case A -> ownedPropertyFunctions(keyStrokeEvent);
-            case S -> endTurn(keyStrokeEvent);
-            case D -> purchase(keyStrokeEvent);
+            switch (e.getCode())
+            {
+                case W -> rollDice(keyStrokeEvent);
+                case S -> endTurn(keyStrokeEvent);
+                case D -> purchase(keyStrokeEvent);
+            }
         }
+        if(e.getCode() == KeyCode.A)
+            toggleGameMenus(keyStrokeEvent);
     }
+
+
 
 
     //endregion

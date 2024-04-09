@@ -7,6 +7,7 @@ import javafx.scene.control.TextInputDialog;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DButils
 {
@@ -53,7 +54,7 @@ public class DButils
 
         }
         DialogPane dialogPane = newAlert.getDialogPane();
-        dialogPane.getStylesheets().add(DButils.class.getResource("Style.css").toExternalForm());
+        dialogPane.getStylesheets().add(Objects.requireNonNull(DButils.class.getResource("Style.css")).toExternalForm());
         dialogPane.getStyleClass().add("myDialog");
         return newAlert;
     }
@@ -69,21 +70,18 @@ public class DButils
 
         // checks if password is used
         // if used already
-        switch (verifyPwd(password))
+
+        if (!verifyPwd(password))
         {
-            case 0 ->
-            {
-                td.showAndWait();
-                password = td.getEditor().getText();
-                completeSave(players, properties, password, td);
-            }
-            case 1, 2 ->
-            {
-                saveGame(conn, password);
-                savePlayers(conn, players, password);
-                saveOwnedProperties(conn, players, properties, password);
-                savePlayerLocations(conn, players, password);
-            }
+            saveGame(conn, password);
+            savePlayers(conn, players, password);
+            saveOwnedProperties(conn, players, properties, password);
+            savePlayerLocations(conn, players, password);
+        } else
+        {
+            td.showAndWait();
+            password = td.getEditor().getText();
+            completeSave(players, properties, password, td);
         }
 
         conn.close();
@@ -92,8 +90,6 @@ public class DButils
     private static void savePlayerLocations(Connection conn, ArrayList<Players> players, String password) throws SQLException
     {
         PreparedStatement ps;
-//        ps = conn.prepareStatement("SET FOREIGN_KEY_CHECK=0;");
-//        ps.executeUpdate();
 
         ps = conn.prepareStatement("INSERT INTO Location VALUES(?, ?, ?)");
         ps.setInt(1, getGameId(password, conn));
@@ -148,8 +144,6 @@ public class DButils
 
         for (int i = 0; i < players.size(); i++)
         {
-            Players p = players.get(i);
-
             ps.setInt(2, i);
             ps.setInt(3, players.get(i).getBalance());
             ps.setString(4, players.get(i).getName());
@@ -192,7 +186,7 @@ public class DButils
         closeUtils(conn, ps, rs);
     }
 
-    private static int verifyPwd(String password) throws SQLException
+    private static boolean verifyPwd(String password) throws SQLException
     {
         Connection conn = connectDB();
         PreparedStatement ps;
@@ -207,19 +201,19 @@ public class DButils
                 Alert alert = makeAlert(3, "Password is Already in Use");
                 alert.showAndWait();
                 closeUtils(rs, ps);
-                return 0;
+                return false;
             }
             if (rs.next())
             {
                 closeUtils(rs, ps);
-                return 1;
+                return true;
             }
         } catch (SQLException e)
         {
             throw new RuntimeException(e);
         }
         closeUtils(rs, ps);
-        return 2;
+        return true;
     }
 
     private static void saveGame(Connection conn, String password) throws SQLException
