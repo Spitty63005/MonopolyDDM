@@ -93,6 +93,7 @@ public class GameController implements Initializable
                 default -> rect = new Rectangle(34, 34, playerColors[i]);
             }
             currentPlayers.add(new Players(nameInputs[i].getText(), rect));
+            currentPlayers.get(i).getPlayerPiece().setId("piece" + i);
         }
 
 //        hides the previous window so the user cannot access it after they start the game

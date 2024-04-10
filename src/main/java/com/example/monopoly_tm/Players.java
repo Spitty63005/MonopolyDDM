@@ -26,10 +26,10 @@ public class Players
         properties.add(property);
     }
 
-    public void sellProperty(Cell property)
-    {
-        properties.remove(property);
-    }
+//    public void sellProperty(Cell property)
+//    {
+//        properties.remove(property);
+//    }
 
     public ObservableList<Cell> getProperties()
     {
@@ -52,7 +52,6 @@ public class Players
         return name;
     }
 
-
 //    set instead of just setting it for when the turn changes and for if doubles are rolled
 
     public void movePlayer(int distance)
@@ -72,11 +71,11 @@ public class Players
         return playerPiece;
     }
 
-    public void moveRectInCell(double x, double y)
-    {
-        playerPiece.setX(x);
-        playerPiece.setY(y);
-    }
+//    public void moveRectInCell(double x, double y)
+//    {
+//        playerPiece.setX(x);
+//        playerPiece.setY(y);
+//    }
 
     public void setPosition(int pos)
     {

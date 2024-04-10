@@ -53,7 +53,7 @@ public class GamePlayController implements Initializable
             Cell_21_pane, Cell_22_pane, Cell_23_pane, Cell_24_pane, Cell_25_pane, Cell_26_pane, Cell_27_pane,
             Cell_28_pane, Cell_29_pane, go_to_jail, Cell_31_pane, Cell_32_pane, Cell_33_pane, Cell_34_pane,
             Cell_35_pane, Cell_36_pane, Cell_37_pane, Cell_38_pane, Cell_39_pane, settings_pane, game_log_pane,
-            jail_Pane;
+            jail_Pane, property_functions_pane, turn_switch_pane;
 
     @FXML
     AnchorPane dimming_ap;
@@ -231,6 +231,36 @@ public class GamePlayController implements Initializable
             }
     }
 
+    private void dynamicPlayPieces(double playerPieceSize,
+                                   ArrayList<Rectangle> pieces, Pane selectedPane)
+    {
+        int numOfPieces = pieces.size();
+
+        int rowCount = (int) Math.ceil((Math.sqrt(numOfPieces)));
+        int colCount = (int) Math.ceil((double) numOfPieces / rowCount);
+
+        int spacer = 10;
+        int margin = 10;
+
+        selectedPane.getChildren().clear();
+
+        for(int row = 0; row < rowCount; row++)
+            for(int col = 0; col < colCount; col++)
+            {
+                int pieceIndex = row * colCount + col;
+                if(pieceIndex >= numOfPieces)
+                    break;
+                Rectangle rect = pieces.get(pieceIndex);
+
+                double layoutX = (col * (playerPieceSize + spacer) + margin) - (playerPieceSize/2);
+                double layoutY = (row * (playerPieceSize + spacer) + margin) - (playerPieceSize/2);
+
+                rect.setLayoutX(layoutX);
+                rect.setLayoutY(layoutY);
+                selectedPane.getChildren().add(rect);
+            }
+    }
+
     void makePlayerPieces(int playerCount)
     {
         double playerPieceSize;
@@ -311,6 +341,7 @@ public class GamePlayController implements Initializable
 
     private void updateDieImages()
     {
+        int test = 4;
         int currLeftDieValue = imageToInt(left_stack);
         int currRightDieValue = imageToInt(right_stack);
         System.out.println("Die one rolled: " + currLeftDieValue +"\nDie two rolled: " + currRightDieValue);
@@ -319,14 +350,14 @@ public class GamePlayController implements Initializable
         System.out.println(currentPlayer.getName() + " Moves Forward " + diceSum + " Spaces");
 
         hasMoved = true;
-
-        doubles = currRightDieValue == currLeftDieValue;
+        diceSum = test;
+        /*doubles = currRightDieValue == currLeftDieValue;
 
         if (doubles)
         {
             roll_btn.setDisable(false);
             currentPlayer.setInJail(false);
-        }
+        }*/
         if(!currentPlayer.isInJail())
             movePiece(diceSum);
 
@@ -381,17 +412,39 @@ public class GamePlayController implements Initializable
     //region actions after roll
     private void movePiece(int amountToMove)
     {
-
+        Rectangle playerPiece = currentPlayer.getPlayerPiece();
         Pane startPane = paneList[getPlayerPosFromPaneList()];
-        startPane.getChildren().remove(currentPlayer.getPlayerPiece());
+        Pane endPane;
 
         int startPaneInt = getPlayerPosFromPaneList();
+        int endPaneInt = getPlayerPosFromPaneList() + amountToMove;
+
+        startPane.getChildren().remove(playerPiece);
         currentPlayer.movePlayer(amountToMove);
-
-        int endPaneInt = getPlayerPosFromPaneList();
-
         movingAnimation(startPaneInt, endPaneInt);
-        paneList[currentPlayer.getPosition()].getChildren().add(currentPlayer.getPlayerPiece());
+
+        endPane = paneList[currentPlayer.getPosition()];
+        if(!endPane.getChildren().isEmpty())
+        {
+            ArrayList<Rectangle> fortnite = new ArrayList<>();
+
+            for (Node n : endPane.getChildren())
+            {
+                if (n instanceof Rectangle)
+                {
+                    fortnite.add((Rectangle) n);
+                }
+            }
+
+            for (int i = 0; i < fortnite.size(); i++)
+            {
+                fortnite.get(i).setId("piece" + i);
+            }
+
+            dynamicPlayPieces(playerPiece.getWidth(), fortnite, endPane);
+        }
+
+        endPane.getChildren().add(playerPiece);
         landingLocationFunctions();
     }
 
@@ -447,9 +500,12 @@ public class GamePlayController implements Initializable
     {
         currentPlayer.setInJail(true);
         Rectangle playerPiece = currentPlayer.getPlayerPiece();
+
         paneList[currentPlayer.getPosition()].getChildren().remove(playerPiece);
         currentPlayer.setPosition(10);
+
         jail_Pane.getChildren().add(playerPiece);
+        System.out.println(currentPlayer.getName() + " went to Jail");
 
     }
 
@@ -483,6 +539,7 @@ public class GamePlayController implements Initializable
         int amountPaid = cell.getCost();
         currentPlayer.setBalance(currentPlayer.getBalance() - amountPaid);
         cell.getOwner().setBalance(currentPlayer.getBalance() + amountPaid);
+        updateGameLog(currentPlayer.getName(), cell.getName(), "pay-rent");
     }
 
     public void purchase(ActionEvent ignoredE)
@@ -526,33 +583,27 @@ public class GamePlayController implements Initializable
 
         sell_tbv.setItems(listData);
     }
-    public void ownedPropertyFunctions(ActionEvent ignoredE)
+    public void ownedPropertyFunctions(ActionEvent e)
     {
-        System.out.println(" ");
         /*
-        * Open a menu that has a list of all your properties
         * once you select one a sell, a trade, and a mortgage button will appear
         * each will call a different method
         * trade and mortgage will close the current menu and show a new respective one
         * sell will just remove the property from the players class and make all instances of ownership for it false
         * */
-
+        if(e.getSource().toString().contains("Sell"))
+            sellProperty(sell_tbv.getSelectionModel().getSelectedItem());
 
     }
 
-    public void toggleGameMenus(ActionEvent ignoredKeyStrokeEvent)
+    private void sellProperty(Cell selectedItem)
     {
-        if(menus_stack.isVisible())
-        {
-            menus_stack.setVisible(false);
-            dimming_ap.setVisible(false);
-        }
-        else
-        {
-            menus_stack.setVisible(true);
-            dimming_ap.setVisible(true);
-        }
+        Players ownerSelling = selectedItem.getOwner();
 
+        ownerSelling.setBalance(ownerSelling.getBalance() + selectedItem.getCost());
+        selectedItem.setOwned(false, null);
+
+        updateGameLog(ownerSelling.getName(), selectedItem.getName(), "sell-prop");
     }
 
     private void updateGameLog(String playerName, String propertyName, String type)
@@ -570,7 +621,8 @@ public class GamePlayController implements Initializable
         switch (type)
         {
             case "buy-prop" -> firstLog.setText(playerName + " has bought " + propertyName + "!");
-            case "payrent" -> firstLog.setText(playerName + "paid rent on " + propertyName + "!");
+            case "sell-prop" -> firstLog.setText(playerName + " has sold " + propertyName + "!");
+            case "pay-rent" -> firstLog.setText(playerName + "paid rent on " + propertyName + "!");
             case "chance" -> firstLog.setText(playerName + " drew a chance card!");
             case "jail" -> firstLog.setText(playerName + " got arrested!");
             case "chest" -> firstLog.setText(playerName + " got the community chest!");
@@ -583,16 +635,14 @@ public class GamePlayController implements Initializable
 
     private void movingAnimation(int endLoc, int currLoc)
     {
-        
+        System.out.println(endLoc + currLoc);
     }
 //endregion
 
     // region Other Info
-    public void toggleSettings(ActionEvent ignoredE)
-    {
-        boolean isSettingsOpen = settings_pane.isVisible();
-        settings_pane.setVisible(!isSettingsOpen);
-    }
+
+
+
     // endregion
 
     //region save game and close game
@@ -653,14 +703,58 @@ public class GamePlayController implements Initializable
                 case W -> rollDice(keyStrokeEvent);
                 case S -> endTurn(keyStrokeEvent);
                 case D -> purchase(keyStrokeEvent);
+                case ESCAPE -> toggleSettings(keyStrokeEvent);
             }
         }
         if(e.getCode() == KeyCode.A)
-            toggleGameMenus(keyStrokeEvent);
+            togglePropertyFunctions(keyStrokeEvent);
     }
 
 
+    //endregion
 
+
+    // region ui
+    private void hideMenuPanes()
+    {
+        settings_pane.setVisible(false);
+        property_functions_pane.setVisible(false);
+        turn_switch_pane.setVisible(false);
+    }
+
+    public void toggleSettings(ActionEvent ignoredE)
+    {
+        hideMenuPanes();
+        if(menus_stack.isVisible())
+        {
+            menus_stack.setVisible(false);
+            dimming_ap.setVisible(false);
+            settings_pane.setVisible(false);
+        }
+        else
+        {
+            menus_stack.setVisible(true);
+            dimming_ap.setVisible(true);
+            settings_pane.setVisible(true);
+        }
+    }
+
+    public void togglePropertyFunctions(ActionEvent ignoredKeyStrokeEvent)
+    {
+        if(menus_stack.isVisible())
+        {
+            menus_stack.setVisible(false);
+            dimming_ap.setVisible(false);
+            property_functions_pane.setVisible(false);
+        }
+        else
+        {
+            menus_stack.setVisible(true);
+            dimming_ap.setVisible(true);
+            property_functions_pane.setVisible(true);
+        }
+
+    }
 
     //endregion
 
