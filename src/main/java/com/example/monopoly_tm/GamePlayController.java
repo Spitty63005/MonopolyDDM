@@ -20,6 +20,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -51,7 +52,8 @@ public class GamePlayController implements Initializable
             Cell_15_pane, Cell_16_pane, Cell_17_pane, Cell_18_pane, Cell_19_pane, free_parking,
             Cell_21_pane, Cell_22_pane, Cell_23_pane, Cell_24_pane, Cell_25_pane, Cell_26_pane, Cell_27_pane,
             Cell_28_pane, Cell_29_pane, go_to_jail, Cell_31_pane, Cell_32_pane, Cell_33_pane, Cell_34_pane,
-            Cell_35_pane, Cell_36_pane, Cell_37_pane, Cell_38_pane, Cell_39_pane, settings_pane, game_log_pane;
+            Cell_35_pane, Cell_36_pane, Cell_37_pane, Cell_38_pane, Cell_39_pane, settings_pane, game_log_pane,
+            jail_Pane;
 
     @FXML
     AnchorPane dimming_ap;
@@ -138,7 +140,7 @@ public class GamePlayController implements Initializable
             setDieLists();
         }
         catch(Exception ex){
-            System.out.println(ex);
+            throw new RuntimeException(ex);
         }
 
         changePlayer(currentPlayer);
@@ -157,70 +159,6 @@ public class GamePlayController implements Initializable
         setPropertiesTable();
     }
 
-    /*
-     *   Make a method to format the player pieces dynamically
-     * divide the dimensions with the amount of players
-     * use that value as the space between for x and y
-     *
-     * possible issues: TOO BIG
-     * */
-    void makePlayerPieces(int playerCount)
-    {
-        Pane start = paneList[0];
-        double x = start.getPrefWidth();
-        double y = start.getPrefHeight();
-        System.out.println(x);
-
-        double gapX = x / playerCount;
-        double gapY = y / playerCount;
-        System.out.println(gapX);
-        double displacementX;
-        double displacementY;
-
-        for (int i = 0; i < playerList.size(); i++)
-        {
-            Players p = playerList.get(i);
-            if (playerList.indexOf(p) == 0)
-            {
-                System.out.println(p.getPlayerPiece().getWidth());
-
-                displacementX = gapX - (p.getPlayerPiece().getWidth());
-
-                System.out.println(displacementX);
-                displacementY = gapY - (p.getPlayerPiece().getHeight());
-
-                p.moveRectInCell(displacementX, displacementY);
-                System.out.println(p.getPlayerPiece().getX());
-            }
-            else
-            {
-                switch(i)
-                {
-                    case 1, 2 ->
-                    {
-                        displacementX = playerList.get(i-1).getPlayerPiece().getX() + gapX;
-                        displacementX -= (p.getPlayerPiece().getWidth()/2);
-                        p.moveRectInCell(displacementX, 5);
-                    }
-
-                    case 3, 4, 5 ->
-                    {
-                        y = playerList.get(i-1).getPlayerPiece().getHeight() + gapY;
-                        x =playerList.get(i-3).getPlayerPiece().getX();
-                        p.moveRectInCell(x, y);
-                    }
-
-                    case 6, 7, 8 ->
-                    {
-
-                    }
-                }
-
-            }
-            paneList[0].getChildren().add(p.getPlayerPiece());
-//            playerList.get(i-1).getPlayerPiece().getHeight();
-        }
-    }
 
     //region turn start and end
     private void changePlayer(Players currentPlayer)
@@ -242,7 +180,7 @@ public class GamePlayController implements Initializable
         roll_btn.setDisable(false);
     }
 
-    public void endTurn(ActionEvent e)
+    public void endTurn(ActionEvent ignoredE)
     {
         if(hasMoved && !doubles)
         {
@@ -265,6 +203,49 @@ public class GamePlayController implements Initializable
 
 
     //region startOfGame
+
+    private void dynamicPlayPieces(double playerPieceSize, int numOfPieces)
+    {
+        int rowCount = (int) Math.ceil((Math.sqrt(numOfPieces)));
+        int colCount = (int) Math.ceil((double) numOfPieces / rowCount);
+
+        Pane startingPane = paneList[0];
+        int spacer = numOfPieces;
+        int margin = (numOfPieces >= 4) ? (int) Math.ceil(startingPane.getPrefWidth() / numOfPieces) : 10;
+
+        System.out.println(margin);
+
+        for(int row = 0; row < rowCount; row++)
+            for(int col = 0; col < colCount; col++)
+            {
+                if(numOfPieces < 1)
+                    break;
+                Rectangle rect =  playerList.get(numOfPieces-1).getPlayerPiece();
+
+                rect.setLayoutX(col * (playerPieceSize + spacer) + margin);
+                rect.setLayoutY(row * (playerPieceSize + spacer) + margin);
+
+                startingPane.getChildren().add(rect);
+
+                numOfPieces--;
+            }
+    }
+
+    void makePlayerPieces(int playerCount)
+    {
+        double playerPieceSize;
+        switch (playerList.size())
+        {
+            case 2 -> playerPieceSize = 50;
+            case 3 ->  playerPieceSize = 45;
+            case 4 ->  playerPieceSize = 40;
+            case 5 ->  playerPieceSize = 35;
+            case 6 ->  playerPieceSize = 30;
+            case 7 ->  playerPieceSize = 25;
+            default ->  playerPieceSize = 20;
+        }
+        dynamicPlayPieces(playerPieceSize, playerCount);
+    }
 
     public static void showGameBoard() throws IOException
     {
@@ -315,24 +296,16 @@ public class GamePlayController implements Initializable
 
     //region dice
 
-    public void rollDice(ActionEvent ae)
+    public void rollDice(ActionEvent ignoredAe)
     {
         roll_btn.setDisable(true);
 
-        if(!hasMoved || doubles)
+        if(!hasMoved || doubles )
         {
             Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.07), e -> rollingFrame()));
-
             timeline.setCycleCount(10);
             timeline.play();
-
-
-            timeline.setOnFinished((e) -> { updateDieImages(); });
-        }
-        else
-        {
-            Alert alert = DButils.makeAlert(2, "Can only roll once a turn unless rolled doubles");
-            alert.show();
+            timeline.setOnFinished((e) -> updateDieImages());
         }
     }
 
@@ -349,7 +322,13 @@ public class GamePlayController implements Initializable
 
         doubles = currRightDieValue == currLeftDieValue;
 
-        movePiece(diceSum);
+        if (doubles)
+        {
+            roll_btn.setDisable(false);
+            currentPlayer.setInJail(false);
+        }
+        if(!currentPlayer.isInJail())
+            movePiece(diceSum);
 
     }
 
@@ -386,10 +365,7 @@ public class GamePlayController implements Initializable
 
     }
 
-    private static int randDieNum()
-    {
-        return (int) (Math.random() * (6 - 1) * 1);
-    }
+    private static int randDieNum()  { return (int) (Math.random() * (6 - 1) * 1); }
 
     private void setDieLists()
     {
@@ -401,7 +377,6 @@ public class GamePlayController implements Initializable
     }
 
 //endregion
-
 
     //region actions after roll
     private void movePiece(int amountToMove)
@@ -429,7 +404,7 @@ public class GamePlayController implements Initializable
             case "property" ->
             {
                 if (cell.isOwned() && !cell.getOwnerName().equals(currentPlayer.getName()))
-                    payRent();
+                    payRent(cell);
             }
             case "utility" -> payUtility();
             case "railroad" -> payRailRoad();
@@ -470,6 +445,11 @@ public class GamePlayController implements Initializable
 
     private void goToJail()
     {
+        currentPlayer.setInJail(true);
+        Rectangle playerPiece = currentPlayer.getPlayerPiece();
+        paneList[currentPlayer.getPosition()].getChildren().remove(playerPiece);
+        currentPlayer.setPosition(10);
+        jail_Pane.getChildren().add(playerPiece);
 
     }
 
@@ -498,12 +478,14 @@ public class GamePlayController implements Initializable
 
     }
 
-    private void payRent()
+    private void payRent(Cell cell)
     {
-
+        int amountPaid = cell.getCost();
+        currentPlayer.setBalance(currentPlayer.getBalance() - amountPaid);
+        cell.getOwner().setBalance(currentPlayer.getBalance() + amountPaid);
     }
 
-    public void purchase(ActionEvent e)
+    public void purchase(ActionEvent ignoredE)
     {
         Cell cellToBuy = cellList.get(currentPlayer.getPosition());
         if(!hasMoved)
@@ -528,7 +510,7 @@ public class GamePlayController implements Initializable
                 cellToBuy.setOwned(true, currentPlayer);
                 currentPlayer.buyProperty(cellToBuy);
                 System.out.println("Successful purchase");
-                updateGameLog(currentPlayer.getName(), cellToBuy.getName(), "buyprop");
+                updateGameLog(currentPlayer.getName(), cellToBuy.getName(), "buy-prop");
                 updateAllText();
             }
         }
@@ -544,8 +526,9 @@ public class GamePlayController implements Initializable
 
         sell_tbv.setItems(listData);
     }
-    public void ownedPropertyFunctions(ActionEvent e)
+    public void ownedPropertyFunctions(ActionEvent ignoredE)
     {
+        System.out.println(" ");
         /*
         * Open a menu that has a list of all your properties
         * once you select one a sell, a trade, and a mortgage button will appear
@@ -557,7 +540,7 @@ public class GamePlayController implements Initializable
 
     }
 
-    public void toggleGameMenus(ActionEvent keyStrokeEvent)
+    public void toggleGameMenus(ActionEvent ignoredKeyStrokeEvent)
     {
         if(menus_stack.isVisible())
         {
@@ -586,7 +569,7 @@ public class GamePlayController implements Initializable
 
         switch (type)
         {
-            case "buyprop" -> firstLog.setText(playerName + " has bought " + propertyName + "!");
+            case "buy-prop" -> firstLog.setText(playerName + " has bought " + propertyName + "!");
             case "payrent" -> firstLog.setText(playerName + "paid rent on " + propertyName + "!");
             case "chance" -> firstLog.setText(playerName + " drew a chance card!");
             case "jail" -> firstLog.setText(playerName + " got arrested!");
@@ -604,9 +587,8 @@ public class GamePlayController implements Initializable
     }
 //endregion
 
-
     // region Other Info
-    public void toggleSettings(ActionEvent e)
+    public void toggleSettings(ActionEvent ignoredE)
     {
         boolean isSettingsOpen = settings_pane.isVisible();
         settings_pane.setVisible(!isSettingsOpen);

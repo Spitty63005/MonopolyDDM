@@ -78,13 +78,17 @@ public class DButils
             saveOwnedProperties(conn, players, properties, password);
             savePlayerLocations(conn, players, password);
         } else
-        {
-            td.showAndWait();
-            password = td.getEditor().getText();
-            completeSave(players, properties, password, td);
-        }
+            handlePasswordDialog(players, properties, td);
 
         conn.close();
+    }
+
+    private static void handlePasswordDialog(ArrayList<Players> players, ObservableList<Cell> properties,
+                                             TextInputDialog td) throws SQLException
+    {
+        td.showAndWait();
+        String password = td.getEditor().getText();
+        completeSave(players, properties, password, td);
     }
 
     private static void savePlayerLocations(Connection conn, ArrayList<Players> players, String password) throws SQLException

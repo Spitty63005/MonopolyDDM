@@ -31,7 +31,7 @@ public class GameController implements Initializable
     int amountOfPlayers;
 
     Color[] playerColors = {Color.BLUE, Color.RED, Color.GREEN, Color.PURPLE,
-            Color.YELLOW, Color.PINK, Color.ORANGE, Color.BEIGE};
+            Color.YELLOW, Color.TURQUOISE, Color.DEEPPINK, Color.DARKGOLDENROD};
 
     ArrayList<Players> currentPlayers = new ArrayList<>();
 
@@ -83,14 +83,14 @@ public class GameController implements Initializable
             }
             switch (amountOfPlayers)
             {
-                case 2 -> {rect = new Rectangle(50, 50, playerColors[i]);}
-                case 3 -> {rect = new Rectangle(45, 45, playerColors[i]);}
-                case 4 -> {rect = new Rectangle(40, 40, playerColors[i]);}
-                case 5 -> {rect = new Rectangle(35, 35, playerColors[i]);}
-                case 6 -> {rect = new Rectangle(30, 30, playerColors[i]);}
-                case 7 -> {rect = new Rectangle(25, 25, playerColors[i]);}
-                case 8 -> {rect = new Rectangle(20, 20, playerColors[i]);}
-                default -> {rect = new Rectangle(34, 34, playerColors[i]);}
+                case 2 -> rect = new Rectangle(50, 50, playerColors[i]);
+                case 3 -> rect = new Rectangle(45, 45, playerColors[i]);
+                case 4 -> rect = new Rectangle(40, 40, playerColors[i]);
+                case 5 -> rect = new Rectangle(35, 35, playerColors[i]);
+                case 6 -> rect = new Rectangle(30, 30, playerColors[i]);
+                case 7 -> rect = new Rectangle(25, 25, playerColors[i]);
+                case 8 -> rect = new Rectangle(20, 20, playerColors[i]);
+                default -> rect = new Rectangle(34, 34, playerColors[i]);
             }
             currentPlayers.add(new Players(nameInputs[i].getText(), rect));
         }

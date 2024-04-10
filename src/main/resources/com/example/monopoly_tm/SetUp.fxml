@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="base_AP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.monopoly_tm.GameController">
+<AnchorPane fx:id="base_AP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.monopoly_tm.GameController">
    <children>
       <AnchorPane fx:id="main_menu_AP" prefHeight="400.0" prefWidth="600.0" styleClass="allBackgrounds" stylesheets="@Style.css">
          <children>
@@ -36,14 +36,14 @@
       </AnchorPane>
       <AnchorPane fx:id="playerCount_AP" prefHeight="400.0" prefWidth="600.0" styleClass="allBackgrounds" stylesheets="@Style.css" visible="false">
          <children>
-            <TextField fx:id="player1" layoutX="90.0" layoutY="105.0" promptText="Player 1" styleClass="allTextFields" visible="false" />
-            <TextField fx:id="player2" layoutX="358.0" layoutY="105.0" promptText="Player 2" styleClass="allTextFields" visible="false" />
-            <TextField fx:id="player3" layoutX="90.0" layoutY="155.0" promptText="Player 3" styleClass="allTextFields" visible="false" />
-            <TextField fx:id="player4" layoutX="358.0" layoutY="155.0" promptText="Player 4" styleClass="allTextFields" visible="false" />
-            <TextField fx:id="player5" layoutX="90.0" layoutY="205.0" promptText="Player 5" styleClass="allTextFields" visible="false" />
-            <TextField fx:id="player6" layoutX="358.0" layoutY="205.0" promptText="Player 6" styleClass="allTextFields" visible="false" />
-            <TextField fx:id="player7" layoutX="90.0" layoutY="255.0" promptText="Player 7" styleClass="allTextFields" visible="false" />
-            <TextField fx:id="player8" layoutX="358.0" layoutY="255.0" promptText="player 8" styleClass="allTextFields" visible="false" />
+            <TextField fx:id="player1" layoutX="90.0" layoutY="105.0" promptText="Player 1" styleClass="allTextFields" text="1" visible="false" />
+            <TextField fx:id="player2" layoutX="358.0" layoutY="105.0" promptText="Player 2" styleClass="allTextFields" text="2" visible="false" />
+            <TextField fx:id="player3" layoutX="90.0" layoutY="155.0" promptText="Player 3" styleClass="allTextFields" text="3" visible="false" />
+            <TextField fx:id="player4" layoutX="358.0" layoutY="155.0" promptText="Player 4" styleClass="allTextFields" text="4" visible="false" />
+            <TextField fx:id="player5" layoutX="90.0" layoutY="205.0" promptText="Player 5" styleClass="allTextFields" text="5" visible="false" />
+            <TextField fx:id="player6" layoutX="358.0" layoutY="205.0" promptText="Player 6" styleClass="allTextFields" text="6" visible="false" />
+            <TextField fx:id="player7" layoutX="90.0" layoutY="255.0" promptText="Player 7" styleClass="allTextFields" text="7" visible="false" />
+            <TextField fx:id="player8" layoutX="358.0" layoutY="255.0" promptText="player 8" styleClass="allTextFields" text="8" visible="false" />
             <Button layoutX="460.0" layoutY="342.0" mnemonicParsing="false" onAction="#showGame" prefHeight="29.0" prefWidth="62.0" styleClass="main-buttons" text="Play" />
             <Label layoutX="169.0" layoutY="24.0" text="Fill Out Player Names!">
                <font>

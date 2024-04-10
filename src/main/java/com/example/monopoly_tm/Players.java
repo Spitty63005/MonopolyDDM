@@ -2,22 +2,17 @@ package com.example.monopoly_tm;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class Players
 {
     String name;
     int balance;
-    ObservableList<Cell> properties = FXCollections.observableArrayList();
-
-    boolean hasDiceRolled = false;
-
-    Rectangle playerPiece;
-
     int position = 0;
+    boolean inJail = false;
+    ObservableList<Cell> properties = FXCollections.observableArrayList();
+    Rectangle playerPiece;
 
     public Players(String name, Rectangle playerPiece)
     {
@@ -40,7 +35,7 @@ public class Players
     {
         return properties;
     }
-    public ObservableList<Cell> getProps() { return (ObservableList<Cell>) properties;}
+    public ObservableList<Cell> getProps() { return properties;}
 
     public int getBalance()
     {
@@ -59,10 +54,6 @@ public class Players
 
 
 //    set instead of just setting it for when the turn changes and for if doubles are rolled
-    public void setHasDiceRolled(boolean hasDiceRolled)
-    {
-        this.hasDiceRolled = hasDiceRolled;
-    }
 
     public void movePlayer(int distance)
     {
@@ -87,8 +78,17 @@ public class Players
         playerPiece.setY(y);
     }
 
-    public Paint getColor()
+    public void setPosition(int pos)
     {
-        return playerPiece.getFill();
+        position = pos;
+    }
+
+    public boolean isInJail()
+    {
+        return inJail;
+    }
+    public void setInJail(boolean isInJail)
+    {
+        inJail = isInJail;
     }
 }
