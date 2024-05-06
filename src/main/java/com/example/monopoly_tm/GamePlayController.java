@@ -13,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -65,8 +66,7 @@ public class GamePlayController implements Initializable
         current_player_properties_LBL, player_land_space_LBL;
 
     @FXML
-    ImageView right_die_one, right_die_two, right_die_three, right_die_four, right_die_five, right_die_six,
-            left_die_one, left_die_two, left_die_three, left_die_four, left_die_five, left_die_six;
+    ImageView right_die, left_die;
 
     @FXML
     StackPane left_stack, right_stack, menus_stack;
@@ -76,8 +76,7 @@ public class GamePlayController implements Initializable
 
     TextInputDialog td = new TextInputDialog();
 
-    ImageView[] rightDie = new ImageView[6];
-    ImageView[] leftDie = new ImageView[6];
+    Image[] all_rolls = new Image[6];
 
     boolean hasMoved = false;
 
@@ -149,9 +148,10 @@ public class GamePlayController implements Initializable
                     }
 
                 }
+
             }
             // gets all the images for the die and adds them to an array
-            setDieLists();
+            setAllRolls();
         }
         catch(Exception ex){
             throw new RuntimeException(ex);
@@ -175,6 +175,17 @@ public class GamePlayController implements Initializable
         // sets the table within the property functions pane
         // will be empty at the start, but it fills as the game goes
         setPropertiesTable();
+    }
+
+    private void setAllRolls()
+    {
+        all_rolls[0] = new Image("resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_One.png");
+        all_rolls[1] = new Image("src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Two.png");
+        all_rolls[2] = new Image("src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Three.png");
+        all_rolls[3] = new Image("src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Four.png");
+        all_rolls[4] = new Image("src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Five.png");
+        all_rolls[5] = new Image("src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Six.png");
+
     }
 
 
@@ -431,8 +442,6 @@ public class GamePlayController implements Initializable
         hasMoved = true;
         doubles = currRightDieValue == currLeftDieValue;
 
-        setImages(currLeftDieValue, currRightDieValue);
-
         if (doubles)
         {
             roll_btn.setDisable(false);
@@ -441,26 +450,6 @@ public class GamePlayController implements Initializable
         if(!currentPlayer.isInJail())
             movePiece(diceSum);
 
-    }
-
-    private void setImages(int left_die, int right_die)
-    {
-        left_stack.getChildren().get(0).setVisible(false);
-        right_stack.getChildren().get(0).setVisible(false);
-
-        left_stack.getChildren().clear();
-        right_stack.getChildren().clear();
-
-        System.out.println();
-        System.out.println(left_die + " well " + right_die);
-
-
-
-        left_stack.getChildren().add(leftDie[left_die - 1]);
-        right_stack.getChildren().add(rightDie[right_die - 1]);
-
-        left_stack.getChildren().get(0).setVisible(true);
-        right_stack.getChildren().get(0).setVisible(true);
     }
 
     /* Image To Int
@@ -498,41 +487,16 @@ public class GamePlayController implements Initializable
     */
     private void rollingFrame()
     {
-        left_stack.getChildren().get(0).setVisible(false);
-        right_stack.getChildren().get(0).setVisible(false);
+        int left = randDieNum();
+        int right = randDieNum();
 
-        left_stack.getChildren().clear();
-        right_stack.getChildren().clear();
-
-        int leftNum = randDieNum();
-        int rightNum = randDieNum();
-
-        System.out.println(" -------- \n Random Nums\n left: " + leftNum +"\nright: " + rightNum + "\n -----------");
-
-        left_stack.getChildren().add(leftDie[leftNum]);
-        right_stack.getChildren().add(rightDie[rightNum]);
-
-        left_stack.getChildren().get(0).setVisible(true);
-        right_stack.getChildren().get(0).setVisible(true);
+        left_die.setImage(all_rolls[left-1]);
+        right_die.setImage(all_rolls[right-1]);
 
     }
 
     // Rand Die Num: returns a random number from 1 to 6
     private static int randDieNum()  { return (int) (Math.random() * (6 - 1) * 1); }
-
-    /* Set Die Lists
-    * this method sets the arrays for the left and right die
-    * each array is initialized to have an imageview in each index,
-    * all of which has the die reflect the index in which it is placed
-    */
-    private void setDieLists()
-    {
-        rightDie = new ImageView[]{right_die_one, right_die_two, right_die_three, right_die_four,
-                right_die_five, right_die_six};
-
-        leftDie = new ImageView[] {left_die_one, left_die_two, left_die_three, left_die_four,
-                left_die_five, left_die_six};
-    }
 
 //endregion
 

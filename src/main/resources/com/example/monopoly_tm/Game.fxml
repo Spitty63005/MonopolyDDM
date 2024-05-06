@@ -63,79 +63,16 @@
                               <Font size="20.0" />
                            </font>
                         </Label>
-                        <StackPane fx:id="left_stack" layoutX="8.0" layoutY="13.0">
-                           <children>
-                              <ImageView fx:id="left_die_five" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_Five.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fx:id="left_die_four" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_Four.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fx:id="left_die_three" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_Three.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fx:id="left_die_two" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_Two.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fx:id="left_die_one" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_One.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fx:id="left_die_six" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_Six.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                        </StackPane>
-                        <StackPane fx:id="right_stack" layoutX="138.0" layoutY="13.0">
-                           <children>
-                              <ImageView fx:id="die_one_IV12" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_Five.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fx:id="right_die_five" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_Four.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fx:id="right_die_four" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_Three.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fx:id="right_die_two" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_Two.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fx:id="right_die_six" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_Six.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fx:id="right_die_three" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_Three.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fx:id="right_die_one" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@images/Die/Rolled_One.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                        </StackPane>
+                        <ImageView fx:id="left_die" fitHeight="140.0" fitWidth="140.0" layoutX="8.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/Die/Rolled_Six.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="right_die" fitHeight="140.0" fitWidth="140.0" layoutX="138.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/Die/Rolled_One.png" />
+                           </image>
+                        </ImageView>
                         <Button layoutX="51.0" layoutY="441.0" mnemonicParsing="false" onAction="#purchase" prefHeight="48.0" prefWidth="77.0" stylesheets="@Style.css" text="Buy">
                            <styleClass>
                               <String fx:value="game-buttons" />
