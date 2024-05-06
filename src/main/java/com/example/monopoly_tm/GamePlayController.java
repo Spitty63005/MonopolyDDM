@@ -21,21 +21,22 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.*;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.*;
+import org.json.simple.parser.JSONParser;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.*;
-
-import java.awt.Desktop;
-import java.net.URI;
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class GamePlayController implements Initializable
 {
@@ -415,8 +416,13 @@ public class GamePlayController implements Initializable
     * if true the player forward the sum amount*/
     private void updateDieImages()
     {
+
         int currLeftDieValue = imageToInt(left_stack);
         int currRightDieValue = imageToInt(right_stack);
+
+        System.out.println("left img: " + imageToInt(left_stack));
+        System.out.println("right img: " + imageToInt(right_stack));
+
         System.out.println("Die one rolled: " + currLeftDieValue +"\nDie two rolled: " + currRightDieValue);
 
         int diceSum = currLeftDieValue + currRightDieValue;
@@ -424,6 +430,8 @@ public class GamePlayController implements Initializable
 
         hasMoved = true;
         doubles = currRightDieValue == currLeftDieValue;
+
+        setImages(currLeftDieValue, currRightDieValue);
 
         if (doubles)
         {
@@ -433,6 +441,26 @@ public class GamePlayController implements Initializable
         if(!currentPlayer.isInJail())
             movePiece(diceSum);
 
+    }
+
+    private void setImages(int left_die, int right_die)
+    {
+        left_stack.getChildren().get(0).setVisible(false);
+        right_stack.getChildren().get(0).setVisible(false);
+
+        left_stack.getChildren().clear();
+        right_stack.getChildren().clear();
+
+        System.out.println();
+        System.out.println(left_die + " well " + right_die);
+
+
+
+        left_stack.getChildren().add(leftDie[left_die - 1]);
+        right_stack.getChildren().add(rightDie[right_die - 1]);
+
+        left_stack.getChildren().get(0).setVisible(true);
+        right_stack.getChildren().get(0).setVisible(true);
     }
 
     /* Image To Int
@@ -476,8 +504,13 @@ public class GamePlayController implements Initializable
         left_stack.getChildren().clear();
         right_stack.getChildren().clear();
 
-        left_stack.getChildren().add(leftDie[randDieNum()]);
-        right_stack.getChildren().add(rightDie[randDieNum()]);
+        int leftNum = randDieNum();
+        int rightNum = randDieNum();
+
+        System.out.println(" -------- \n Random Nums\n left: " + leftNum +"\nright: " + rightNum + "\n -----------");
+
+        left_stack.getChildren().add(leftDie[leftNum]);
+        right_stack.getChildren().add(rightDie[rightNum]);
 
         left_stack.getChildren().get(0).setVisible(true);
         right_stack.getChildren().get(0).setVisible(true);
