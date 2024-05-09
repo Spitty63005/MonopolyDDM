@@ -196,7 +196,7 @@
                   <Pane fx:id="Cell_9_pane" layoutX="133.0" layoutY="909.0" prefHeight="124.0" prefWidth="91.0" />
                   <Pane fx:id="jail_visit" layoutX="6.0" layoutY="903.0" prefHeight="124.0" prefWidth="127.0">
                      <children>
-                        <Pane fx:id="jail_Pane" layoutX="29.0" layoutY="4.0" prefHeight="97.0" prefWidth="95.0" />
+                        <Pane fx:id="jail_Pane" layoutX="36.0" layoutY="4.0" prefHeight="97.0" prefWidth="95.0" />
                      </children>
                   </Pane>
                   <Pane fx:id="Cell_11_pane" layoutX="8.0" layoutY="812.0" prefHeight="91.0" prefWidth="124.0" />
@@ -208,7 +208,6 @@
                   <Pane fx:id="Cell_17_pane" layoutX="8.0" layoutY="304.0" prefHeight="91.0" prefWidth="124.0" />
                   <Pane fx:id="Cell_18_pane" layoutX="8.0" layoutY="213.0" prefHeight="91.0" prefWidth="124.0" />
                   <Pane fx:id="Cell_19_pane" layoutX="8.0" layoutY="130.0" prefHeight="91.0" prefWidth="124.0" />
-                  <Pane fx:id="free_parking" layoutX="6.0" prefHeight="124.0" prefWidth="127.0" />
                   <Pane fx:id="Cell_21_pane" layoutX="133.0" layoutY="6.0" prefHeight="124.0" prefWidth="91.0" />
                   <Pane fx:id="Cell_22_pane" layoutX="219.0" prefHeight="124.0" prefWidth="91.0" />
                   <Pane fx:id="Cell_23_pane" layoutX="310.0" prefHeight="124.0" prefWidth="91.0" />
@@ -228,6 +227,7 @@
                   <Pane fx:id="Cell_37_pane" layoutX="930.0" layoutY="648.0" prefHeight="91.0" prefWidth="124.0" />
                   <Pane fx:id="Cell_38_pane" layoutX="930.0" layoutY="728.0" prefHeight="91.0" prefWidth="124.0" />
                   <Pane fx:id="Cell_39_pane" layoutX="930.0" layoutY="812.0" prefHeight="91.0" prefWidth="124.0" />
+                  <Pane fx:id="free_parking" layoutX="8.0" layoutY="5.0" prefHeight="121.0" prefWidth="121.0" />
 
 
 

@@ -1,5 +1,4 @@
 package com.example.monopoly_tm;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
@@ -30,17 +29,15 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
 public class GamePlayController implements Initializable
 {
+    //region FXML Variables
     @FXML
     BorderPane gameplay_BP;
 
@@ -69,11 +66,12 @@ public class GamePlayController implements Initializable
     ImageView right_die, left_die;
 
     @FXML
-    StackPane left_stack, right_stack, menus_stack;
+    StackPane menus_stack;
 
     @FXML
     Button roll_btn;
-
+    //endregion
+    //region Variables
     TextInputDialog td = new TextInputDialog();
 
     Image[] all_rolls = new Image[6];
@@ -82,81 +80,28 @@ public class GamePlayController implements Initializable
 
     boolean doubles = false;
 
+    static Players currentPlayer;
+    //endregion
+    //region Arrays
     static ArrayList<Players> playerList = new ArrayList<>();
 
 //    these two arrays are parallel
     Pane[] paneList;
     ObservableList<Cell> cellList = FXCollections.observableArrayList();
 
-    static Players currentPlayer;
+    String leftRoll, rightRoll;
 
+    String[] filePaths = new String[6];
+    //endregion
 
+//region Initialization
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
         // gets the file of the JSON file to read all the cell's information from
-        File jsonFile = new File("src/main/resources/com/example/monopoly_tm/Tiles.json");
-        JSONParser parser = new JSONParser();
-        try
-        {
-            Object obj = parser.parse(new FileReader(jsonFile));
-            JSONArray jsonArray = (JSONArray) obj;
+        cellList = JsonUtils.getTiles();
 
-            for(Object x: jsonArray)
-            {
-                JSONObject currLineItems = (JSONObject) x;
-
-                // checks for kind of cell by checking the length
-                // of each array stored in the JSON file
-                switch (currLineItems.size())
-                {
-
-                    case 2 ->
-                    {
-                        // a standard cell without any way to buy or own it
-                        String name = (String) currLineItems.get("name");
-                        String type = (String) currLineItems.get("type");
-                        cellList.add(new Cell(type, name));
-                    }
-
-                    case 3 ->
-                    {
-                        // a cell like the railroads or utilities
-                        String name = (String) currLineItems.get("name");
-                        String type = (String) currLineItems.get("type");
-
-                        int cost = Math.toIntExact((long) currLineItems.get("cost"));
-                        cellList.add(new Cell(type, name, cost));
-                    }
-
-                    default ->
-                    {
-                        /*
-                        * a property cell which is made as a property object
-                        * which is a child of cell
-                        * and adds the new property object to the cell array list*/
-                        String name = (String) currLineItems.get("name");
-                        String type = (String) currLineItems.get("type");
-
-                        int cost = Math.toIntExact((long) currLineItems.get("cost"));
-                        String color = (String) currLineItems.get("color");
-
-                        int[] rent = getRentValues(currLineItems.get("rent"));
-                        int houseCost = Math.toIntExact((long) currLineItems.get("house"));
-
-                        cellList.add(new Property(type, name, color, rent, cost, houseCost));
-                    }
-
-                }
-
-            }
-            // gets all the images for the die and adds them to an array
-            setAllRolls();
-        }
-        catch(Exception ex){
-            throw new RuntimeException(ex);
-        }
-
+        setAllRolls();
         // set the game to start on the first play's turn
         changeGUIPlayerText(currentPlayer);
 
@@ -179,17 +124,30 @@ public class GamePlayController implements Initializable
 
     private void setAllRolls()
     {
-        all_rolls[0] = new Image("resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_One.png");
-        all_rolls[1] = new Image("src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Two.png");
-        all_rolls[2] = new Image("src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Three.png");
-        all_rolls[3] = new Image("src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Four.png");
-        all_rolls[4] = new Image("src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Five.png");
-        all_rolls[5] = new Image("src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Six.png");
+        try
+        {
+            filePaths[0] = "src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_One.png";
+            filePaths[1] = "src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Two.png";
+            filePaths[2] = "src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Three.png";
+            filePaths[3] = "src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Four.png";
+            filePaths[4] = "src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Five.png";
+            filePaths[5] = "src\\main\\resources\\com\\example\\monopoly_tm\\images\\Die\\Rolled_Six.png";
 
+            all_rolls[0] = new Image(new FileInputStream(filePaths[0]));
+            all_rolls[1] = new Image(new FileInputStream(filePaths[1]));
+            all_rolls[2] = new Image(new FileInputStream(filePaths[2]));
+            all_rolls[3] = new Image(new FileInputStream(filePaths[3]));
+            all_rolls[4] = new Image(new FileInputStream(filePaths[4]));
+            all_rolls[5] = new Image(new FileInputStream(filePaths[5]));
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
     }
+    //endregion
 
-
-    //region turn start and end
+//region Turn Start/End
 
     /* Change Player
     * this method changes the text on the GUI
@@ -245,8 +203,7 @@ public class GamePlayController implements Initializable
     }
     //endregion
 
-
-    //region startOfGame
+//region Start Of Game
 
     /* Dynamic Player Pieces
     * this method sets the layout for the player pieces to space evenly in the start cell
@@ -254,14 +211,15 @@ public class GamePlayController implements Initializable
     */
     private void dynamicPlayerPieces(double playerPieceSize, int numOfPieces)
     {
+
+
+
         int rowCount = (int) Math.ceil((Math.sqrt(numOfPieces)));
         int colCount = (int) Math.ceil((double) numOfPieces / rowCount);
 
         Pane startingPane = paneList[0];
         int spacer = numOfPieces;
         int margin = (numOfPieces >= 4) ? (int) Math.ceil(startingPane.getPrefWidth() / numOfPieces) : 10;
-
-        System.out.println(margin);
 
         for(int row = 0; row < rowCount; row++)
             for(int col = 0; col < colCount; col++)
@@ -289,34 +247,34 @@ public class GamePlayController implements Initializable
     * to have them space evenly and stay within the cell
     */
 
-    private void dynamicPlayerPieces(double playerPieceSize,
+    private void dynamicPlayerPieces(int playerPieceSize,
                                      ArrayList<Rectangle> pieces, Pane selectedPane)
     {
+        selectedPane.getChildren().clear();
+
         int numOfPieces = pieces.size();
+        int paneWidth = (int) selectedPane.getPrefWidth();
+        int paneHeight = (int) selectedPane.getPrefHeight();
 
         int rowCount = (int) Math.ceil((Math.sqrt(numOfPieces)));
         int colCount = (int) Math.ceil((double) numOfPieces / rowCount);
 
-        int spacer = 10;
-        int margin = 10;
+        int horizontalSpacer = (paneWidth - (colCount * playerPieceSize)) / (colCount+1);
+        int verticalSpacer = (paneHeight - (rowCount * playerPieceSize)) / (rowCount+1);
 
-        selectedPane.getChildren().clear();
+        for(int i = 0; i < numOfPieces; i++)
+        {
+            Rectangle rect = pieces.get(i);
 
-        for(int row = 0; row < rowCount; row++)
-            for(int col = 0; col < colCount; col++)
-            {
-                int pieceIndex = row * colCount + col;
-                if(pieceIndex >= numOfPieces)
-                    break;
-                Rectangle rect = pieces.get(pieceIndex);
+            int row = i / colCount;
+            int col = i % colCount;
 
-                double layoutX = (col * (playerPieceSize + spacer) + margin) - (playerPieceSize/2);
-                double layoutY = (row * (playerPieceSize + spacer) + margin) - (playerPieceSize/2);
+            rect.setLayoutX((col * playerPieceSize) + ((col + 1) * horizontalSpacer));
+            rect.setLayoutY((row * playerPieceSize) + ((row + 1) * verticalSpacer));
 
-                rect.setLayoutX(layoutX);
-                rect.setLayoutY(layoutY);
-                selectedPane.getChildren().add(rect);
-            }
+            selectedPane.getChildren().add(rect);
+        }
+
     }
 
     /* Make Player Pieces
@@ -375,24 +333,10 @@ public class GamePlayController implements Initializable
         currentPlayer = playerList.get(0);
     }
 
-    private int[] getRentValues(Object rent)
-    {
-        int[] rentArr = new int[6];
-        String[] splitString = ((String) rent).split(",");
-
-//        takes all the parts of the inputted string and introduces them to the array
-        for(int i = 0; i < 6; i++)
-        {
-            long part1 = (Long.parseLong(splitString[i]));
-            rentArr[i] = Math.toIntExact(part1);
-        }
-
-        return rentArr;
-    }
 
     //endregion
 
-    //region dice
+//region Dice Roll
 
     /* Roll Dice
     * sets the roll button to disabled to prevent a bug
@@ -428,11 +372,9 @@ public class GamePlayController implements Initializable
     private void updateDieImages()
     {
 
-        int currLeftDieValue = imageToInt(left_stack);
-        int currRightDieValue = imageToInt(right_stack);
+        int currLeftDieValue = imageToInt(leftRoll);
+        int currRightDieValue = imageToInt(rightRoll);
 
-        System.out.println("left img: " + imageToInt(left_stack));
-        System.out.println("right img: " + imageToInt(right_stack));
 
         System.out.println("Die one rolled: " + currLeftDieValue +"\nDie two rolled: " + currRightDieValue);
 
@@ -462,12 +404,14 @@ public class GamePlayController implements Initializable
     * a comma then returns the value of which word is listed
     * this switch statement defaults to 1 if there is an unknown value
     */
-    private int imageToInt(StackPane stack)
+    private int imageToInt(String die)
     {
-        String result = stack.getChildren().get(0).toString();
-        String[] imageViewSplit = result.split("_");
+        String[] imageViewSplit = die.split("_");
 
-        switch (imageViewSplit[2].substring(0, imageViewSplit[2].indexOf(",")))
+        int index = imageViewSplit[2].indexOf('.');
+        String number = imageViewSplit[2].substring(0, index);
+
+        switch (number.toLowerCase())
         {
             case "two" -> { return 2; }
             case "three" ->  { return 3; }
@@ -490,8 +434,11 @@ public class GamePlayController implements Initializable
         int left = randDieNum();
         int right = randDieNum();
 
-        left_die.setImage(all_rolls[left-1]);
-        right_die.setImage(all_rolls[right-1]);
+        leftRoll = filePaths[left];
+        rightRoll = filePaths[right];
+
+        left_die.setImage(all_rolls[left]);
+        right_die.setImage(all_rolls[right]);
 
     }
 
@@ -500,7 +447,7 @@ public class GamePlayController implements Initializable
 
 //endregion
 
-    //region actions after roll
+//region Actions After Roll
 
     /* Move Piece
     * takes an int value for how many spaces the player will move
@@ -522,12 +469,8 @@ public class GamePlayController implements Initializable
         Pane startPane = paneList[getPlayerPosFromPaneList()];
         Pane endPane;
 
-        int startPaneInt = getPlayerPosFromPaneList();
-        int endPaneInt = getPlayerPosFromPaneList() + amountToMove;
-
         startPane.getChildren().remove(playerPiece);
         currentPlayer.movePlayer(amountToMove);
-        movingAnimation(startPaneInt, endPaneInt);
 
         endPane = paneList[currentPlayer.getPosition()];
         if(!endPane.getChildren().isEmpty())
@@ -542,7 +485,7 @@ public class GamePlayController implements Initializable
                 }
             }
 
-            dynamicPlayerPieces(playerPiece.getWidth(), piecesOnEndPane, endPane);
+            dynamicPlayerPieces((int) playerPiece.getWidth(), piecesOnEndPane, endPane);
         }
 
         endPane.getChildren().add(playerPiece);
@@ -783,19 +726,15 @@ public class GamePlayController implements Initializable
 
     private int getPlayerPosFromPaneList() { return currentPlayer.getPosition(); }
 
-    private void movingAnimation(int endLoc, int currLoc)
-    {
-        System.out.println(endLoc + currLoc);
-    }
-//endregion
+    //endregion
 
-    // region Other Info
+// region Other Info
 
 
 
     // endregion
 
-    //region save game and close game
+//region Save/Close Game
     public void save(ActionEvent e) throws SQLException
     {
         String pressedButton = e.getSource().toString();
@@ -841,7 +780,7 @@ public class GamePlayController implements Initializable
     }
     //endregion
 
-    //region QoL
+//region Keybindings
     public void keybindings(KeyEvent e)
     {
         ActionEvent keyStrokeEvent = new ActionEvent();
@@ -851,20 +790,21 @@ public class GamePlayController implements Initializable
             switch (e.getCode())
             {
                 case W -> rollDice(keyStrokeEvent);
+                case A -> togglePropertyFunctions(keyStrokeEvent);
                 case S -> endTurn(keyStrokeEvent);
                 case D -> purchase(keyStrokeEvent);
-                case ESCAPE -> toggleSettings(keyStrokeEvent);
+                case J -> goToJail();
             }
         }
-        if(e.getCode() == KeyCode.A)
-            togglePropertyFunctions(keyStrokeEvent);
+
+        if(e.getCode() == KeyCode.ESCAPE)
+            toggleSettings(keyStrokeEvent);
     }
 
 
     //endregion
 
-
-    // region ui
+// region Menu UI
     private void hideMenuPanes()
     {
         settings_pane.setVisible(false);
@@ -875,7 +815,7 @@ public class GamePlayController implements Initializable
     public void toggleSettings(ActionEvent ignoredE)
     {
         hideMenuPanes();
-        if(menus_stack.isVisible())
+        if(dimming_ap.isVisible())
         {
             menus_stack.setVisible(false);
             dimming_ap.setVisible(false);

@@ -1,2 +1,9 @@
-package com.example.monopoly_tm;public class Cards {
+package com.example.monopoly_tm;
+
+public class Cards
+{
+    public Cards()
+    {
+
+    }
 }
