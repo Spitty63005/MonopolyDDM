@@ -53,7 +53,7 @@
                               <String fx:value="game-buttons" />
                               <String fx:value="uniform-border" />
                            </styleClass></Button>
-                        <Button fx:id="roll_btn" layoutX="152.0" layoutY="165.0" mnemonicParsing="false" onAction="#rollDice" prefHeight="48.0" prefWidth="77.0" stylesheets="@Style.css" text="Roll Dice">
+                        <Button fx:id="roll_btn" layoutX="152.0" layoutY="165.0" mnemonicParsing="false" onAction="#rollBtnOnClick" prefHeight="48.0" prefWidth="77.0" stylesheets="@Style.css" text="Roll Dice">
                            <styleClass>
                               <String fx:value="game-buttons" />
                               <String fx:value="uniform-border" />

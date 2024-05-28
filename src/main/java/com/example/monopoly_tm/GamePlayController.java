@@ -1,6 +1,5 @@
 package com.example.monopoly_tm;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,17 +23,18 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class GamePlayController implements Initializable
 {
     //region FXML Variables
@@ -63,7 +63,9 @@ public class GamePlayController implements Initializable
         current_player_properties_LBL, player_land_space_LBL;
 
     @FXML
-    ImageView right_die, left_die;
+    public static ImageView right_die;
+    @FXML
+    public static ImageView left_die;
 
     @FXML
     StackPane menus_stack;
@@ -72,13 +74,13 @@ public class GamePlayController implements Initializable
     Button roll_btn;
     //endregion
     //region Variables
-    TextInputDialog td = new TextInputDialog();
-
-    Image[] all_rolls = new Image[6];
+    private final TextInputDialog td = new TextInputDialog();
 
     boolean hasMoved = false;
 
     boolean doubles = false;
+
+    Logger log;
 
     static Players currentPlayer;
     //endregion
@@ -89,12 +91,25 @@ public class GamePlayController implements Initializable
     Pane[] paneList;
     ObservableList<Cell> cellList = FXCollections.observableArrayList();
 
-    String leftRoll, rightRoll;
 
-    String[] filePaths = new String[6];
+    final static Image[] all_rolls = new Image[6];
+    final static String[] filePaths = new String[6];
+    //endregion
+    //region Objects
+    final Dice dice = new Dice();
+
+    public static boolean isHaveMoved()
+    {
+        return hasMoved;
+    }
     //endregion
 
-//region Initialization
+    public boolean isDoubles()
+    {
+        return doubles;
+    }
+
+    //region Initialization
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -142,7 +157,7 @@ public class GamePlayController implements Initializable
         }
         catch (FileNotFoundException e)
         {
-            e.printStackTrace();
+            log.log(Level.WARNING, e.getMessage(), e);
         }
     }
     //endregion
@@ -336,116 +351,7 @@ public class GamePlayController implements Initializable
 
     //endregion
 
-//region Dice Roll
 
-    /* Roll Dice
-    * sets the roll button to disabled to prevent a bug
-    * then checks if the player has moved
-    * or if the player has rolled doubles
-    * if either are true it will begin
-    * the rolling animation once completed the animation
-    * the updateDieImages method
-    */
-    public void rollDice(ActionEvent ignoredAe)
-    {
-        roll_btn.setDisable(true);
-
-        if(!hasMoved || doubles )
-        {
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.07), e -> rollingFrame()));
-            timeline.setCycleCount(10);
-            timeline.play();
-            timeline.setOnFinished((e) -> updateDieImages());
-        }
-    }
-
-    /* Update Die Images
-    * stores the number that the two die rolls
-    * in two int variables and prints out what is rolled
-    * then adds the two values together to find how much
-    * the player will move, then checks if the two sides
-    * are of equal value to set the doubles boolean
-    * then checks if doubles is true and enables the roll button
-    * and frees you if you were in jail
-    * then checks if the player is not in jail
-    * if true the player forward the sum amount*/
-    private void updateDieImages()
-    {
-
-        int currLeftDieValue = imageToInt(leftRoll);
-        int currRightDieValue = imageToInt(rightRoll);
-
-
-        System.out.println("Die one rolled: " + currLeftDieValue +"\nDie two rolled: " + currRightDieValue);
-
-        int diceSum = currLeftDieValue + currRightDieValue;
-        System.out.println(currentPlayer.getName() + " Moves Forward " + diceSum + " Spaces");
-
-        hasMoved = true;
-        doubles = currRightDieValue == currLeftDieValue;
-
-        if (doubles)
-        {
-            roll_btn.setDisable(false);
-            currentPlayer.setInJail(false);
-        }
-        if(!currentPlayer.isInJail())
-            movePiece(diceSum);
-
-    }
-
-    /* Image To Int
-    * gets the toString node of the image currently displayed as rolled
-    * on the die of the stack pane given,
-    * then splits the string wherever there is an underscore
-    * then a switch statement on the index 2
-    * with a substring from the start to wherever
-    * the first word ends by setting the end of the substring to
-    * a comma then returns the value of which word is listed
-    * this switch statement defaults to 1 if there is an unknown value
-    */
-    private int imageToInt(String die)
-    {
-        String[] imageViewSplit = die.split("_");
-
-        int index = imageViewSplit[2].indexOf('.');
-        String number = imageViewSplit[2].substring(0, index);
-
-        switch (number.toLowerCase())
-        {
-            case "two" -> { return 2; }
-            case "three" ->  { return 3; }
-            case "four" ->  { return 4; }
-            case "five" ->  { return 5; }
-            case "six" ->  { return 6; }
-            default ->  { return 1; }
-        }
-    }
-
-    /* Rolling Frame
-    * this is the method that makes the dice roll animation
-    * it does this by setting the current die not be visible
-    * then removing the die from the stack panes
-    * and adding a new die image selected by a random number
-    * and sets the visibility values of the new die to true
-    */
-    private void rollingFrame()
-    {
-        int left = randDieNum();
-        int right = randDieNum();
-
-        leftRoll = filePaths[left];
-        rightRoll = filePaths[right];
-
-        left_die.setImage(all_rolls[left]);
-        right_die.setImage(all_rolls[right]);
-
-    }
-
-    // Rand Die Num: returns a random number from 1 to 6
-    private static int randDieNum()  { return (int) (Math.random() * (6 - 1) * 1); }
-
-//endregion
 
 //region Actions After Roll
 
@@ -463,7 +369,7 @@ public class GamePlayController implements Initializable
     * and places the player Piece to where it is going
     * then calls the landingLocationFunctions method
     */
-    private void movePiece(int amountToMove)
+    public void movePiece(int amountToMove)
     {
         Rectangle playerPiece = currentPlayer.getPlayerPiece();
         Pane startPane = paneList[getPlayerPosFromPaneList()];
@@ -789,7 +695,7 @@ public class GamePlayController implements Initializable
         {
             switch (e.getCode())
             {
-                case W -> rollDice(keyStrokeEvent);
+//                case W -> dice.rollDice(roll_btn);
                 case A -> togglePropertyFunctions(keyStrokeEvent);
                 case S -> endTurn(keyStrokeEvent);
                 case D -> purchase(keyStrokeEvent);
@@ -844,6 +750,11 @@ public class GamePlayController implements Initializable
             property_functions_pane.setVisible(true);
         }
 
+    }
+
+    public void rollBtnOnClick(ActionEvent ignoredE)
+    {
+//        dice.rollDice(roll_btn);
     }
 
     //endregion

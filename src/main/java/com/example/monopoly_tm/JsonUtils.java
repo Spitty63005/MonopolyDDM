@@ -74,7 +74,23 @@ public class JsonUtils
 
     public static ObservableList<Cards> getCards(String type)
     {
+        ObservableList<Cards> cardList = FXCollections.observableArrayList();
+        File jsonFile = new File("src/main/resources/com/example/monopoly_tm/Cards.json");
+        JSONParser parser = new JSONParser();
+        try
+        {
+            JSONObject obj = (JSONObject) parser.parse(new FileReader(jsonFile));
+            JSONArray jsonArray = (JSONArray) obj.get(type);
 
+            for(Object x: jsonArray)
+            {
+
+            }
+        }
+        catch(Exception ex){
+            throw new RuntimeException(ex);
+        }
+        return cardList;
     }
 
     private static int[] getRentValues(Object rent)

@@ -151,6 +151,4 @@ public class GameController implements Initializable
         if(result.get() == confirm)
             System.exit(0);
     }
-
-
 }
